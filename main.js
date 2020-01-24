@@ -1,8 +1,26 @@
-var enabled = false;
+var enabled;
 var source;
-var gainNode;
-var filter;
 var audioContext;
+
+var lowFilter, midFilter, highFilter;
+
+let bands = {
+    "s0": {
+        "min": 20,
+        "max": 300,
+        "gain": 0
+    },
+    "s1": {
+        "min": 300,
+        "max": 4000,
+        "gain": 0
+    },
+    "s2": {
+        "min": 4000,
+        "max": 20000,
+        "gain": 0
+    }
+}
 
 window.addEventListener('load', (e) => {
     console.log('EQ main.js running on', window.location.href);
@@ -11,47 +29,71 @@ window.addEventListener('load', (e) => {
     var video = $("video")[0];
 
     source = audioContext.createMediaElementSource(video);
-    gainNode = audioContext.createGain();
-    filter = audioContext.createBiquadFilter();
 
-    source.connect(filter);
-    filter.connect(audioContext.destination);
+    initFilters();
 
-    filter.type = "highpass";
-    filter.frequency.setValueAtTime(800, audioContext.currentTime);
-
-    // Can dynamically change!!!
-    // var x = 0;
-    // var intervalID = setInterval(function () {
-    //     console.log('Setting filter freq to: ', x, ' it currently: ', filter.frequency);
-    //     filter.frequency.setValueAtTime(x, audioContext.currentTime);
-        
-    
-    //    if (++x === 900) {
-    //        window.clearInterval(intervalID);
-    //    }
-    // }, 10);
-
-    
+    source.connect(lowFilter).connect(midFilter).connect(highFilter).connect(audioContext.destination);
 }, false);
 
-function toggle() {
-    console.log('Clicked that toggle baby')
+function initFilters() {
+    lowFilter = audioContext.createBiquadFilter();
+    lowFilter.type = "lowshelf";
+    lowFilter.frequency.setValueAtTime(bands["s0"].max, audioContext.currentTime);
+    lowFilter.gain.setValueAtTime(0, audioContext.currentTime);
+
+    midFilter = audioContext.createBiquadFilter();
+    midFilter.type = "peaking";
+    midFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
+    midFilter.Q.setValueAtTime(100, audioContext.currentTime);
+    midFilter.gain.setValueAtTime(0, audioContext.currentTime);
+
+    highFilter = audioContext.createBiquadFilter();
+    highFilter.type = "highshelf";
+    highFilter.frequency.setValueAtTime(bands["s0"].min, audioContext.currentTime);
+    highFilter.gain.setValueAtTime(0, audioContext.currentTime);
+}
+
+function power() {
     if (enabled === true) {
-        filter.type = "lowpass"
+        console.log('Turning Equalizer OFF')
+        source.disconnect(lowFilter);
+        source.connect(audioContext.destination);
         enabled = false;
     } else {
-        filter.type = "highpass"
+        console.log('Turning Equalizer ON')
+        source.connect(lowFilter);
         enabled = true;
     }
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    switch (request.message) {
-        case 'toggle':
-            toggle();
+function changeGain(sliderIndex, sliderValue) {
+    console.log('Setting ', sliderIndex, 'GAIN to ', sliderValue);
+    switch (sliderIndex) {
+        case 's0':
+            lowFilter.gain.setValueAtTime(sliderValue, audioContext.currentTime);
+            break;
+        case 's1':
+            midFilter.gain.setValueAtTime(sliderValue, audioContext.currentTime);
+            break;
+        case 's2':
+            highFilter.gain.setValueAtTime(sliderValue, audioContext.currentTime);
             break;
     
+        default:
+            break;
+    }
+    bands[sliderIndex]['gain'] = sliderValue;
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    switch (request.message) {
+        case 'power':
+            power();
+            break;
+        case 'gain-slider':
+            sendResponse({value: request.value})
+            changeGain(request.slider_index, request.value);
+            break;
         default:
             break;
     }
