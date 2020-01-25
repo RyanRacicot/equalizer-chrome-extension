@@ -67,26 +67,34 @@ window.addEventListener('load', (e) => {
     console.log('EQ main.js running on', window.location.href);
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     audioContext = new AudioContext();
+
     var video = $("video")[0];
+    if (video != undefined) {
+        source = audioContext.createMediaElementSource(video);
+    
+        init8BandEQFilters();
+    
+        // Setup Effects Pipeline
+        bands['s0'].filter
+        .connect(bands['s1'].filter)
+        .connect(bands['s2'].filter)
+        .connect(bands['s3'].filter)
+        .connect(bands['s4'].filter)
+        .connect(bands['s5'].filter)
+        .connect(bands['s6'].filter)
+        .connect(bands['s7'].filter)
+        .connect(audioContext.destination);
 
-    source = audioContext.createMediaElementSource(video);
+        // But don't connect source audio to them yet.
+        source.connect(audioContext.destination);
 
-    init8BandEQFilters();
-    // init3BandFilters();
+        enabled = false;
+    }
 
-    source.connect(bands['s0'].filter)
-    .connect(bands['s1'].filter)
-    .connect(bands['s2'].filter).connect(bands['s3'].filter).connect(bands['s4'].filter).connect(bands['s5'].filter).connect(bands['s6'].filter).connect(bands['s7'].filter).connect(audioContext.destination);
-    // source.connect(lowFilter).connect(midFilter).connect(highFilter).connect(audioContext.destination);
 }, false);
 
 
 function init8BandEQFilters() {
-    // var lowshelfFilter = audioContext.createBiquadFilter();
-    // lowshelfFilter.type = "lowshelf";
-    // lowshelfFilter.frequency.setValueAtTime(bands['s0'].frequency, audioContext.currentTime);
-    // lowshelfFilter.gain.setValueAtTime(bands['s0'].gain, audioContext.currentTime);
-    // bands['s0'].filter = lowshelfFilter;
     filter0 = audioContext.createBiquadFilter();
     filter0.type = "lowshelf";
     filter0.frequency.setValueAtTime(bands['s0'].frequency, audioContext.currentTime);
@@ -154,19 +162,32 @@ function init3BandFilters() {
 }
 
 function power() {
-    if (enabled === true) {
-        console.log('Turning Equalizer OFF')
-        source.disconnect(bands['s0'].filter);
-        source.connect(audioContext.destination);
-        // source.disconnect(lowFilter);
-        // source.connect(audioContext.destination);
-        enabled = false;
+    if (enabled === false) {
+        enable();
     } else {
-        console.log('Turning Equalizer ON')
-        // source.connect(lowFilter);
-        source.connect(bands['s0'].filter);
-        enabled = true;
+        disable();
     }
+}
+
+function enable() {
+    if (source && bands['s0'].filter) {
+        console.log('EQ: Power ON')
+        source.connect(bands['s0'].filter);
+    }
+    enabled = true;
+}
+
+function disable() {
+    if (enabled && source && bands['s0'].filter && audioContext) {
+        console.log('EQ: Power OFF')
+        try {
+            source.disconnect(bands['s0'].filter);
+        } catch (e) {
+            console.log('Tried to disconnect first filter from source but taht shit wasnt conencted')
+        }
+        source.connect(audioContext.destination);
+    }
+    enabled = false;
 }
 
 function changeGain(sliderIndex, sliderValue) {
@@ -204,18 +225,44 @@ function changeGain(sliderIndex, sliderValue) {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    var responseObject = {};
     switch (request.message) {
         case 'power':
-            power();
+            Promise.all([power()])
+            .then(() => {
+                    sendResponse({enabled: enabled});
+                })
+                .catch(e => {
+                    console.error('Error in content script: ', e);
+                    sendResponse({action: request.action, result: 'error', message: e})
+                });
             break;
+
+        case'enable':
+            Promise.all([enable()])
+                .then(() => {
+                    sendResponse({enabled: enabled});
+                })
+                .catch(e => {
+                    console.error('Error in content script: ', e);
+                    sendResponse({action: request.action, result: 'error', message: e})
+                });
+                
         case 'gain-slider':
-            sendResponse({value: request.value})
-            changeGain(request.slider_index, request.value);
+            Promise.all([changeGain(request.slider_index, request.value)])
+                .then(() => {
+                    responseObject[request.slider_index] = request.value;
+                    sendResponse(responseObject);
+                })
+                .catch(e => {
+                    console.error('Error in content script: ', e);
+                    sendResponse({action: request.action, result: 'error', message: e})
+                })
             break;
         default:
+            sendResponse({action: "fall-through-action"});
             break;
     }
-    sendResponse({farewell: "goodbye"});
 });
 
 
