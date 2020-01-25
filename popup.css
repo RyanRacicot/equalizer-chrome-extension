@@ -1,0 +1,24 @@
+body {
+    background-color: white;
+    color: black;
+    width: 200px;
+}
+
+.gain-slider {
+    -webkit-appearance: none;
+    width: min-content;
+    vertical-align: middle;
+    width: 10px;
+    margin: 0 5px;
+}
+
+#sliders {
+    width: 100%;
+    justify-content: space-evenly;
+}
+::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* height: 5px;
+    width: 5px;
+    border-radius: 50; */
+}
