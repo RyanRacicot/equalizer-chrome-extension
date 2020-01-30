@@ -71,94 +71,37 @@ window.addEventListener('load', (e) => {
     var video = $("video")[0];
     if (video != undefined) {
         source = audioContext.createMediaElementSource(video);
-    
-        init8BandEQFilters();
-    
-        // Setup Effects Pipeline
-        bands['s0'].filter
-        .connect(bands['s1'].filter)
-        .connect(bands['s2'].filter)
-        .connect(bands['s3'].filter)
-        .connect(bands['s4'].filter)
-        .connect(bands['s5'].filter)
-        .connect(bands['s6'].filter)
-        .connect(bands['s7'].filter)
-        .connect(audioContext.destination);
 
-        // But don't connect source audio to them yet.
-        source.connect(audioContext.destination);
-
-        enabled = false;
+            init8BandEQFilters();
+        
+            // Setup Effects Pipeline
+            bands['s0'].filter
+            .connect(bands['s1'].filter)
+            .connect(bands['s2'].filter)
+            .connect(bands['s3'].filter)
+            .connect(bands['s4'].filter)
+            .connect(bands['s5'].filter)
+            .connect(bands['s6'].filter)
+            .connect(bands['s7'].filter)
+            .connect(audioContext.destination);
+    
+            // But don't connect source audio to them yet.
+            source.connect(audioContext.destination);
+    
+            enabled = false;
+    
     }
 
 }, false);
 
 
 function init8BandEQFilters() {
-    filter0 = audioContext.createBiquadFilter();
-    filter0.type = "lowshelf";
-    filter0.frequency.setValueAtTime(bands['s0'].frequency, audioContext.currentTime);
-    filter0.gain.setValueAtTime(bands['s0'].gain, audioContext.currentTime);
-    bands['s0'].filter = filter0;
-
-    filter1 = audioContext.createBiquadFilter();
-    filter1.type = "peaking";
-    filter1.frequency.setValueAtTime(bands['s1'].frequency, audioContext.currentTime);
-    filter1.gain.setValueAtTime(bands['s1'].gain, audioContext.currentTime);
-    bands['s1'].filter = filter1;
-
-    filter2 = audioContext.createBiquadFilter();
-    filter2.type = "peaking";
-    filter2.frequency.setValueAtTime(bands['s2'].frequency, audioContext.currentTime);
-    filter2.gain.setValueAtTime(bands['s2'].gain, audioContext.currentTime);
-    bands['s2'].filter = filter2;
-
-    filter3 = audioContext.createBiquadFilter();
-    filter3.type = "peaking";
-    filter3.frequency.setValueAtTime(bands['s3'].frequency, audioContext.currentTime);
-    filter3.gain.setValueAtTime(bands['s3'].gain, audioContext.currentTime);
-    bands['s3'].filter = filter3;
-
-    filter4 = audioContext.createBiquadFilter();
-    filter4.type = "peaking";
-    filter4.frequency.setValueAtTime(bands['s4'].frequency, audioContext.currentTime);
-    filter4.gain.setValueAtTime(bands['s4'].gain, audioContext.currentTime);
-    bands['s4'].filter = filter4;
-
-    filter5 = audioContext.createBiquadFilter();
-    filter5.type = "peaking";
-    filter5.frequency.setValueAtTime(bands['s5'].frequency, audioContext.currentTime);
-    filter5.gain.setValueAtTime(bands['s5'].gain, audioContext.currentTime);
-    bands['s5'].filter = filter5;
-
-    filter6 = audioContext.createBiquadFilter();
-    filter6.type = "peaking";
-    filter6.frequency.setValueAtTime(bands['s6'].frequency, audioContext.currentTime);
-    filter6.gain.setValueAtTime(bands['s6'].gain, audioContext.currentTime);
-    bands['s6'].filter = filter6;
-
-    filter7 = audioContext.createBiquadFilter();
-    filter7.type = "highshelf";
-    filter7.frequency.setValueAtTime(bands['s7'].frequency, audioContext.currentTime);
-    filter7.gain.setValueAtTime(bands['s7'].gain, audioContext.currentTime);
-    bands['s7'].filter = filter7;
-}
-function init3BandFilters() {
-    lowFilter = audioContext.createBiquadFilter();
-    lowFilter.type = "lowshelf";
-    lowFilter.frequency.setValueAtTime(bands["s0"].max, audioContext.currentTime);
-    lowFilter.gain.setValueAtTime(0, audioContext.currentTime);
-
-    midFilter = audioContext.createBiquadFilter();
-    midFilter.type = "peaking";
-    midFilter.frequency.setValueAtTime(4000, audioContext.currentTime);
-    midFilter.Q.setValueAtTime(1, audioContext.currentTime);
-    midFilter.gain.setValueAtTime(0, audioContext.currentTime);
-
-    highFilter = audioContext.createBiquadFilter();
-    highFilter.type = "highshelf";
-    highFilter.frequency.setValueAtTime(bands["s2"].min, audioContext.currentTime);
-    highFilter.gain.setValueAtTime(0, audioContext.currentTime);
+    for (var bandID in bands) {
+        bands[bandID].filter = audioContext.createBiquadFilter();
+        bands[bandID].filter.type = bands[bandID].type;
+        bands[bandID].filter.frequency.setValueAtTime(bands[bandID].frequency, audioContext.currentTime);
+        bands[bandID].filter.gain.setValueAtTime(bands[bandID].gain, audioContext.currentTime);
+    }
 }
 
 function power() {
@@ -190,80 +133,75 @@ function disable() {
     enabled = false;
 }
 
+function reset() {
+    console.log('RESET')
+    for (filter in bands) {
+        if (bands[filter].filter) {
+            bands[filter].filter.gain.setValueAtTime(0, audioContext.currentTime);
+            bands[filter].gain = 0;
+        }
+    }
+}
+
 function changeGain(sliderIndex, sliderValue) {
     console.log('Setting ', sliderIndex, 'GAIN to ', sliderValue);
 
-    switch (sliderIndex) {
-        case 's0':
-            filter0.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's1':
-            filter1.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's2':
-            filter2.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's3':
-            filter3.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's4':
-            filter4.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's5':
-            filter5.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's6':
-            filter6.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;
-        case 's7':
-            filter7.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-            break;  
-        default:
-            break;
-    }
-    // bands[sliderIndex]['gain'] = sliderValue;
+    bands[sliderIndex].filter.gain.setValueAtTime(sliderValue, audioContext.currentTime);
+    bands[sliderIndex].gain = sliderValue;
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    var responseObject = {};
-    switch (request.message) {
-        case 'power':
-            Promise.all([power()])
-            .then(() => {
-                    sendResponse({enabled: enabled});
-                })
-                .catch(e => {
-                    console.error('Error in content script: ', e);
-                    sendResponse({action: request.action, result: 'error', message: e})
-                });
-            break;
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//     var responseObject = {};
+//     switch (request.message) {
+//         case 'power':
+//             Promise.all([power()])
+//             .then(() => {
+//                     sendResponse({enabled: enabled});
+//                 })
+//                 .catch(e => {
+//                     console.error('Error in content script: ', e);
+//                     sendResponse({action: request.action, result: 'error', message: e})
+//                 });
+//             break;
 
-        case'enable':
-            Promise.all([enable()])
-                .then(() => {
-                    sendResponse({enabled: enabled});
-                })
-                .catch(e => {
-                    console.error('Error in content script: ', e);
-                    sendResponse({action: request.action, result: 'error', message: e})
-                });
+//         case 'enable':
+//             Promise.all([enable()])
+//                 .then(() => {
+//                     sendResponse({enabled: enabled});
+//                 })
+//                 .catch(e => {
+//                     console.error('Error in content script: ', e);
+//                     sendResponse({action: request.action, result: 'error', message: e})
+//                 });
+//             break;
+
+//         case 'reset':
+//             Promise.all([reset()])
+//                 .then(() => {
+//                     sendResponse({reset: true});
+//                 })
+//                 .catch(e => {
+//                     console.error('Error in content script: ', e);
+//                     sendResponse({action: request.action, result: 'error', message: e})
+//                 });
+//             break;
                 
-        case 'gain-slider':
-            Promise.all([changeGain(request.slider_index, request.value)])
-                .then(() => {
-                    responseObject[request.slider_index] = request.value;
-                    sendResponse(responseObject);
-                })
-                .catch(e => {
-                    console.error('Error in content script: ', e);
-                    sendResponse({action: request.action, result: 'error', message: e})
-                })
-            break;
-        default:
-            sendResponse({action: "fall-through-action"});
-            break;
-    }
-});
+//         case 'gain-slider':
+//             Promise.all([changeGain(request.slider_index, request.value)])
+//                 .then(() => {
+//                     responseObject[request.slider_index] = request.value;
+//                     sendResponse(responseObject);
+//                 })
+//                 .catch(e => {
+//                     console.error('Error in content script: ', e);
+//                     sendResponse({action: request.action, result: 'error', message: e})
+//                 })
+//             break;
+//         default:
+//             sendResponse({action: "fall-through-action"});
+//             break;
+//     }
+// });
 
 
 

@@ -7,10 +7,12 @@
         "tabs",
         "storage",
         "activeTab",
+        "tabCapture",
         "storage"
     ],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["background.js"],
+        "persistent": true
     },
     "browser_action": {
         "default_icon": "icons/get_started16.png",
@@ -22,8 +24,7 @@
                 "*://www.youtube.com/*"
             ],
             "js": [
-                "jquery-3.1.4.min.js", 
-                "main.js"
+                "jquery-3.1.4.min.js"
             ]
         }
     ]
