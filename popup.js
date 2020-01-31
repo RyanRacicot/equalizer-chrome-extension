@@ -14,31 +14,41 @@ async function listenerEvents() {
 
   port.postMessage({action: 'init'})
   port.onMessage.addListener((msg) => {
-    switch (msg) {
+    switch (msg.action) {
       case 'init':
+        $('#power-indicator').css('background-color', 'green')
         restoreOptions();
         break;
-        
+      case 'gain-slider':
+        saveSliderSettings(msg.slider_index, msg.value)
         default:
+      case 'power':
+        $('#power-indicator').css('background-color', (msg.enabled) ? 'green': 'black')
         // console.log(msg);
         break;
     }
   })
 
-  $(".gain-slider").each(function (){
-    $(this).on("change", function() {
-        console.log($(this).attr("id"), 'is now at', $(this).val())
-        sendFreqSpecificGainMessage($(this).attr("id"), parseFloat($(this).val())).then(() => {
-        saveSliderSettings($(this).attr("id"), parseFloat($(this).val()));
-      });
-    });
-  });
+  document.querySelectorAll('.gain-slider').forEach((slider) => {
+    slider.oninput = function() {
+    // slider.onchange = function() { // This is stable
+      var sliderId = this.getAttribute('id')
+      var sliderValue = this.value
+      if (sliderId != 'master') $("label[for='" + sliderId + "']")[0].innerHTML = sliderValue + "dB"
+      sendFreqSpecificGainMessage(sliderId, sliderValue)
+    }
+  })
 
-  
+  document.getElementById('presets').oninput = function() {
+    port.postMessage({action: 'preset', value: this.value})
+  }
+
+
   document.getElementById("power").onclick = power;
   document.getElementById("reset").onclick = reset;
 
-  async function sendFreqSpecificGainMessage(sliderNumber, gainValue) {
+  function sendFreqSpecificGainMessage(sliderNumber, gainValue) {
+    console.log('Setting', sliderNumber, ' to ', gainValue)
     port.postMessage({action: 'gain-slider', slider_index: sliderNumber, value: gainValue})
   }
 
@@ -52,14 +62,18 @@ async function listenerEvents() {
       console.log(sliderIDs[i])
       sendFreqSpecificGainMessage(sliderIDs[i], 0);
       $('#'+sliderIDs[i]).val(0);
-      saveSliderSettings(sliderIDs[i], 0);
+      // saveSliderSettings(sliderIDs[i], 0);
     }
+    sendFreqSpecificGainMessage('master', 1);
+    $('#master').val(1);
   }
 
   function restoreOptions() {
 
     chrome.storage.sync.get(null, (items) => {
       var sliderIDs = Object.keys(items);
+
+      console.log(sliderIds)
 
       if (items.enabled && items.enabled == true) {
         console.log('EQ Last saved as ON')

@@ -1,31 +1,63 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Document</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <title>Chrome Equalizer</title>
         <link rel="stylesheet" href="popup.css">
     </head>
-    <body>  
-        <div class="container">
-            <div class="col align-content-space-around" id="title">
-                <h5>YOUTUBE EQUALIZER</h5>
-                <button class="btn btn-light" id="power">On/Off</button>
-                <button class="btn btn-light" id="reset">Reset</button>
+    <body> 
+            <div id="main">
+                <div id="title">
+                    <h2>EQUALIZER</h2>
+                    <div id="power-indicator"></div>
+                    <button class="btn btn-light" id="power">On/Off</button>
+                    <button class="btn btn-light" id="reset">Reset</button>
+                    <select name="presets" id="presets">
+                        <option disabled selected value> -- Presets -- </option>                        <option value="flat">Flat</option>
+                        <option value="Empty">Empty</option>
+                        <option value="Outside">Outside</option>
+                    </select>
+                </div>
+                <div class="sliders-container">
+                    <div class="slider-wrapper">
+                        <label for="master">Master</label>
+                        <input type="range" class="gain-slider" name="master" id="master" min="0" max="2" value="1" step=".1">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s0">0dB</label>
+                        <input type="range" class="gain-slider" name="s0" id="s0" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s1">0dB</label>
+                        <input type="range" class="gain-slider" name="s1" id="s1" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s2">0dB</label>
+                        <input type="range" class="gain-slider" name="s2" id="s2" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s3">0dB</label>
+                        <input type="range" class="gain-slider " name="s3" id="s3" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s4">0dB</label>
+                        <input type="range" class="gain-slider" name="s4" id="s4" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s5">0dB</label>
+                        <input type="range" class="gain-slider" name="s5" id="s5" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s6">0dB</label>
+                        <input type="range" class="gain-slider" name="s6" id="s6" min="-40" max="12" value="0">
+                    </div>
+                    <div class="slider-wrapper">
+                        <label for="s7">0dB</label>
+                        <input type="range" class="gain-slider" name="s7" id="s7" min="-40" max="12" value="0">
+                    </div>
+                </div>
+                
             </div>
-            <div class="range-slider">
-                <input type="range" class="gain-slider rs-range" name="s0" id="s0" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s1" id="s1" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s2" id="s2" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s3" id="s3" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s4" id="s4" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s5" id="s5" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s6" id="s6" min="-12" max="12">
-                <input type="range" class="gain-slider rs-range" name="s7" id="s7" min="-12" max="12">
-            </div>
-        </div>
-
         <script src="jquery-3.1.4.min.js"></script>
-        <!-- <script src="bootstrap.min.js"></script> -->
         <script src="popup.js"></script>
 </body>
 </html>

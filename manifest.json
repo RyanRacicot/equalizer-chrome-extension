@@ -17,15 +17,5 @@
     "browser_action": {
         "default_icon": "icons/get_started16.png",
         "default_popup": "popup.html"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "*://www.youtube.com/*"
-            ],
-            "js": [
-                "jquery-3.1.4.min.js"
-            ]
-        }
-    ]
+    }
 }

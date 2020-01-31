@@ -1,6 +1,8 @@
 var audioContext;
 var sourceAudio;
 var currentPort;
+var masterGain;
+
 
 var filter0, filter1, filter2, filter3, filter4, filter5, filter6, filter7;
 
@@ -84,7 +86,7 @@ chrome.extension.onConnect.addListener((port) => {
             case 'power':
                 Promise.all([power()])
                 .then(() => {
-                        port.postMessage({enabled: enabled});
+                        port.postMessage({action: 'power', enabled: enabled});
                     })
                     .catch(e => {
                         console.error('Error in content script: ', e);
@@ -102,22 +104,12 @@ chrome.extension.onConnect.addListener((port) => {
                         port.postMessage({action: msg.action, result: 'error', message: e})
                     });
                 break;
-    
-            case 'reset':
-                Promise.all([reset()])
-                    .then(() => {
-                        port.postMessage({reset: true});
-                    })
-                    .catch(e => {
-                        console.error('Error in content script: ', e);
-                        port.postMessage({action: msg.action, result: 'error', message: e})
-                    });
-                break;
                     
             case 'gain-slider':
                 Promise.all([changeGain(msg.slider_index, msg.value)])
                     .then(() => {
-                        responseObject[msg.slider_index] = msg.value;
+                        responseObject[msg.slider_index] = msg.slider_index;
+                        responseObject[msg.value] = msg.value;
                         port.postMessage(responseObject);
                     })
                     .catch(e => {
@@ -125,6 +117,12 @@ chrome.extension.onConnect.addListener((port) => {
                         port.postMessage({action: msg.action, result: 'error', message: e})
                     })
                 break;
+
+            case 'preset':
+                Promise.all([selectPreset(msg.value)])
+                .then(() => {
+                    port.postMessage({action: msg.action})
+                })
 
             default:
                 port.postMessage({action: "fall-through-action"});
@@ -138,10 +136,15 @@ function init() {
         console.log('Captured stream: ', stream)
         audioContext = new AudioContext();
         sourceAudio = audioContext.createMediaStreamSource(stream);
+        masterGain = audioContext.createGain();
+
+        masterGain.gain.setValueAtTime(1, audioContext.currentTime)
+        masterGain.gain.value = 1;
 
         init8BandEQFilters();
 
         sourceAudio
+        .connect(masterGain)
         .connect(bands['s0'].filter)
         .connect(bands['s1'].filter)
         .connect(bands['s2'].filter)
@@ -152,6 +155,8 @@ function init() {
         .connect(bands['s7'].filter)
         .connect(audioContext.destination)
 
+        // disable();
+
         currentPort.postMessage('init')
     });
 }
@@ -161,11 +166,10 @@ function init8BandEQFilters() {
         bands[bandID].filter = audioContext.createBiquadFilter();
         bands[bandID].filter.type = bands[bandID].type;
         bands[bandID].filter.frequency.setValueAtTime(bands[bandID].frequency, audioContext.currentTime);
-        bands[bandID].filter.gain.setValueAtTime(bands[bandID].gain, audioContext.currentTime);
+        bands[bandID].filter.gain.setValueAtTime(bands[bandID].gain - 8, audioContext.currentTime);
         console.log('Init: ', bands[bandID])
     }
 }
-
 
 function power() {
     if (enabled === false) {
@@ -177,31 +181,49 @@ function power() {
 
 function enable() {
     console.log('EQ: Power ON')
-    sourceAudio.connect(bands['s0'].filter);
+    for (var bandID in bands) {
+        bands[bandID].filter.gain.setValueAtTime(bands[bandID].gain, audioContext.currentTime);
+    }
+    masterGain.gain = 1;
     enabled = true;
 }
 
 function disable() {
     console.log('EQ: Power OFF')
-    sourceAudio.disconnect(bands['s0'].filter);
-    sourceAudio.connect(audioContext.destination);
+    for (var bandID in bands) {
+        bands[bandID].filter.gain.setValueAtTime(0, audioContext.currentTime);
+    }
+    masterGain.gain.setValueAtTime(1, audioContext.currentTime);
     enabled = false;
 }
 
-function reset() {
-    console.log('RESET')
-    for (filter in bands) {
-        if (bands[filter].filter) {
-            bands[filter].filter.gain.setValueAtTime(0, audioContext.currentTime);
-            bands[filter].gain = 0;
-        }
+function changeGain(sliderIndex, sliderValue) {
+    if (sliderIndex == 'master') {
+        console.log('Changing master volume to: ', sliderValue)
+        masterGain.gain.setValueAtTime(sliderValue, audioContext.currentTime)
+    } else {
+        console.log('Setting ', sliderIndex, 'GAIN to ', sliderValue);
+        bands[sliderIndex].filter.gain.setValueAtTime(sliderValue, audioContext.currentTime);
+        bands[sliderIndex].gain = sliderValue;
     }
 }
 
-function changeGain(sliderIndex, sliderValue) {
-    console.log('Setting ', sliderIndex, 'GAIN to ', sliderValue);
-    console.log(bands[sliderIndex])
-    bands[sliderIndex].filter.gain.setValueAtTime(sliderValue, audioContext.currentTime);
-    bands[sliderIndex].gain = sliderValue;
-    console.log('sound dest', audioContext.destination);
+function selectPreset(preset) {
+    console.log('Loading preset: ', preset)
+    var presets = loadPresets();
+    console.log(presets)
 }
+
+function loadPresets() {   
+
+    var xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+    xobj.open('GET', 'presets.json', true); // Replace 'appDataServices' with the path to your file
+    xobj.onreadystatechange = function () {
+          if (xobj.readyState == 4 && xobj.status == "200") {
+            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+            return xobj.responseText;
+          }
+    };
+    xobj.send(null);  
+ }
