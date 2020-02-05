@@ -1,3 +1,3 @@
 # Chrome Extension: Equalizer
 
-This chrome extension extends functionality for the user to apply a simple EQ to the audio YouTube videos.
+This chrome extension allows for basic equalization specific for each tab of the users' browser.

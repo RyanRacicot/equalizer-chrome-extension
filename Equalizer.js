@@ -1,7 +1,7 @@
 import { loadExternalJSON } from "./loadJSON.js";
 
 export default class Equalizer {
-    j
+
     constructor(tabID) {
         this.tabID = tabID;
         this.enabled = false;
