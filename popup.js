@@ -30,6 +30,10 @@ async function main() {
 						break;
 		
 					case 'power':
+						
+						for (let sliderID in msg.filters) {
+							setSliderValue(sliderID, msg.filters[sliderID].gain)
+						}
 						togglePowerIndicator(msg.enabled);
 						break;
 		

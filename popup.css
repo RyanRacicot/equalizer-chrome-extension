@@ -43,7 +43,7 @@ body {
 
 #middle-volume-label {
     position: absolute;
-    top: 15.5%;
+    top: 37%;
     right: 0;
 }
 
@@ -68,13 +68,22 @@ body {
 }
 
 #buttons {
-    display: flex;
+    /* display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; */
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 30% auto 40%;
+    grid-template-areas: 'buttons' 'title' 'presets';
+}
+
+#icons {
+    grid-area: 'buttons';
 }
 
 #title {
+    grid-area: 'title';
     padding: 1em;
     text-align: center;
     letter-spacing: 1em;
@@ -163,11 +172,21 @@ label {
     /* display: inline-block; */
 }
 
-.preset-wrapper {
-    position: relative;
-}
-
-.preset-wrapper select {
-    display: none;
+#presets {
+    grid-area: 'presets';
+    display: block;
+    -webkit-appearance: none;
+    padding: .5em 2em .5em 1em;
+    margin: .5em;
+    color: white;
+    border: 2px solid white;
+    box-shadow: none;
+    font-size: 1em;
+    letter-spacing: .1em;
+    font-weight: bold;
+    background-color: transparent;
+    background-position-x: 90%;
+    outline: none;
+    background: url('./keyboard_arrow_down-24px.svg') no-repeat right transparent;
 }
 

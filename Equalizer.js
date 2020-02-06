@@ -4,7 +4,7 @@ export default class Equalizer {
 
     constructor(tabID) {
         this.tabID = tabID;
-        this.enabled = false;
+        this.enabled = true;
         loadExternalJSON('filters.json', 
         (filtersObject) => {
             this.filters = filtersObject
@@ -81,7 +81,7 @@ export default class Equalizer {
                 this.filters[filterID].filter = this.audioContext.createBiquadFilter();
                 this.filters[filterID].filter.type = this.filters[filterID].type;
                 this.filters[filterID].filter.frequency.setValueAtTime(this.filters[filterID].frequency, this.audioContext.currentTime);
-                this.filters[filterID].filter.gain.setValueAtTime(0, this.audioContext.currentTime);
+                this.filters[filterID].filter.gain.setValueAtTime(this.filters[filterID].gain, this.audioContext.currentTime);
             }
 
             this.inputStream.connect(this.filters['s0'].filter)
@@ -101,16 +101,25 @@ export default class Equalizer {
     }
 
     async enable() {
-        for (var filterID in this.filters) {
-            this.filters[filterID].filter.gain.setValueAtTime(parseFloat(this.filters[filterID].gain), this.audioContext.currentTime);
+        if (!this.inputStream.mediaStream.active) {
+            this.init()
+        } else {
+            for (var filterID in this.filters) {
+                this.filters[filterID].filter.gain.setValueAtTime(parseFloat(this.filters[filterID].gain), this.audioContext.currentTime);
+            }
         }
         this.enabled = true;
     }
     
     async disable() {
+        this.inputStream.mediaStream.getAudioTracks().forEach((track) => {
+            track.stop();
+        })
+
         for (var filterID in this.filters) {
             this.filters[filterID].filter.gain.setValueAtTime(0, this.audioContext.currentTime);
         }
+
         this.enabled = false;
     }
 

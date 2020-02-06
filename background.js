@@ -17,7 +17,6 @@ chrome.extension.onConnect.addListener((port) => {
 
             case 'init':
                 if (currentTabEQ) {
-                    // Already initialized Equalizer for tab
                     port.postMessage({action: msg.action, enabled: currentTabEQ.enabled})
                 } else {
                     createEqualizer(msg.tabID)
@@ -29,13 +28,7 @@ chrome.extension.onConnect.addListener((port) => {
 
             case 'power':
                 currentTabEQ.power().then(() => {
-                    port.postMessage({action: 'power', enabled: currentTabEQ.enabled, tab: msg.tabID});
-                })
-            break;
-    
-            case 'enable':
-                currentTabEQ.enable().then(() => {
-                    port.postMessage({enabled: currentTabEQ.enabled, tab: msg.tabID})
+                    port.postMessage({action: 'power', enabled: currentTabEQ.enabled, tab: msg.tabID, filters: currentTabEQ.filters});
                 })
             break;
                     
