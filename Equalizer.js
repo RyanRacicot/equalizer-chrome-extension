@@ -5,7 +5,7 @@ export default class Equalizer {
     constructor(tabID) {
         this.tabID = tabID;
         this.enabled = true;
-        loadExternalJSON('filters.json', 
+        loadExternalJSON('assets/filters.json', 
         (filtersObject) => {
             this.filters = filtersObject
             this.init()
@@ -125,9 +125,8 @@ export default class Equalizer {
 
     async changeGain(sliderName, value) {
         if (this.filters[sliderName].filter) {
-            // Only change gain immediately, if enabled
+            // Only change gain immediately if enabled, else just store the value to set when enabled
             if (this.enabled) {
-                // console.log('Setting gain of ', this.tabID, '\'s ', sliderName, ' to ', value)
                 this.filters[sliderName].filter.gain.setValueAtTime(value, this.audioContext.currentTime)
             }
             this.filters[sliderName].gain = value;
@@ -135,7 +134,7 @@ export default class Equalizer {
     }
 
     async selectPreset(preset) {
-        loadExternalJSON('presets.json', 
+        loadExternalJSON('assets/presets.json', 
         (presets) => {
             if (presets[preset]) {
                 for (let [sliderName, value] of Object.entries(presets[preset])) {

@@ -16,7 +16,6 @@ body {
     #780127,
     #780174
     );
-    /* background: linear-gradient(35deg, #D16bA5, #C777B9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1); */
     background-position: center;
     background-size: 400% 400%;
     animation-name: MOVE-BG;
@@ -31,7 +30,6 @@ body {
     height: auto;
     width: 30px;
     margin: 1em 0em;
-    /* border: 1px solid white; */
     font-size: .85em;
 }
 
@@ -68,10 +66,6 @@ body {
 }
 
 #buttons {
-    /* display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between; */
     display: grid;
     grid-template-rows: auto;
     grid-template-columns: 30% auto 40%;
@@ -147,8 +141,6 @@ body {
     padding-right: 30px;
     display: flex;
     flex-direction: row;
-    /* align-items: center;
-    justify-content: center; */
 }
 
 .slider-wrapper {
@@ -159,8 +151,6 @@ body {
 }
 
 label {
-    /* transform: rotate(-45deg); */
-    /* width: auto; */
     width: 26px;
     margin-top: 1.35em;
 }
@@ -169,7 +159,6 @@ label {
     -webkit-appearance: slider-vertical;
     width: 10px;
     margin: 0 auto;
-    /* display: inline-block; */
 }
 
 #presets {
@@ -187,6 +176,6 @@ label {
     background-color: transparent;
     background-position-x: 90%;
     outline: none;
-    background: url('./keyboard_arrow_down-24px.svg') no-repeat right transparent;
+    background: url('./assets/keyboard_arrow_down-24px.svg') no-repeat right transparent;
 }
 

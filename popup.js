@@ -1,6 +1,5 @@
 import { loadExternalJSON } from "./loadJSON.js";
 
-// document.addEventListener('DOMContentLoaded', listenerEvents, false);
 document.addEventListener('DOMContentLoaded', main, false);
 
 let sliderIDs = [
@@ -22,24 +21,9 @@ async function main() {
 			port.onMessage.addListener((msg) => {
 				switch (msg.action) {
 					case 'init':
-						togglePowerIndicator(msg.enabled);
-						break;
-		
-					case 'gain-slider':
-						console.log(msg)
-						break;
-		
 					case 'power':
-						
-						for (let sliderID in msg.filters) {
-							setSliderValue(sliderID, msg.filters[sliderID].gain)
-						}
 						togglePowerIndicator(msg.enabled);
-						break;
-		
-					case 'preset':
-						break;
-		
+						break;		
 					default:
 				}
 			})
@@ -55,7 +39,7 @@ async function main() {
 	
 		document.getElementById('presets').oninput = function() {
 			port.postMessage({action: 'preset', preset: this.value, tabID: tabID})
-			loadExternalJSON('presets.json', (presets) => {
+			loadExternalJSON('assets/presets.json', (presets) => {
 				for (let [sliderName, value] of Object.entries(presets[this.value])) {
 					setSliderValue(sliderName, value);
 				}
@@ -92,7 +76,7 @@ async function main() {
 			var powerButton = $("#power-icon")
 	
 			if (!enabled) {
-				powerButton.css({ fill: "#ff0000" });
+				powerButton.css({fill: "#ff0000"});
 			} else {
 				powerButton.css({fill: "#00cc77"})
 			}

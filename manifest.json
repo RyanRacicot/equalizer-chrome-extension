@@ -1,21 +1,19 @@
 {
     "manifest_version": 2,
-    "name": "Equalizer",
+    "name": "Tab Equalizer",
     "version": "1.0",
-    "description": "Google Chrome Tab Equalizer and General Audio Manager",
+    "description": "Google Chrome Tab Equalizer",
     "permissions": [
         "tabs",
-        "storage",
         "activeTab",
-        "tabCapture",
-        "storage"
+        "tabCapture"
     ],
     "background": {
         "page": "background.html",
         "persistent": true
     },
     "browser_action": {
-        "default_icon": "icons/get_started16.png",
+        "default_icon": "assets/mixer.png",
         "default_popup": "popup.html"
     }
 }
