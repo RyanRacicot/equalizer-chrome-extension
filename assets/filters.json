@@ -1,0 +1,48 @@
+{
+    "s0": {
+        "type": "lowshelf",
+        "frequency": 100,
+        "gain": 0.0
+    },
+    "s1": {
+        "type": "peaking",
+        "frequency": 250,
+        "gain": 0,
+        "Q": 1.0
+    },
+    "s2": {
+        "type": "peaking",
+        "frequency": 500,
+        "gain": 0,
+        "Q": 1.0
+    },
+    "s3": {
+        "type": "peaking",
+        "frequency": 1000,
+        "gain": 0,
+        "Q": 1.0
+    },
+    "s4": {
+        "type": "peaking",
+        "frequency": 2000,
+        "gain": 0,
+        "Q": 1.0
+    },
+    "s5": {
+        "type": "peaking",
+        "frequency": 5000,
+        "gain": 0,
+        "Q": 1.0
+    },
+    "s6": {
+        "type": "peaking",
+        "frequency": 10000,
+        "gain": 0,
+        "Q": 1.0
+    },
+    "s7": {
+        "type": "highshelf",
+        "frequency": 12000,
+        "gain": 0
+    }
+}
