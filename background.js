@@ -17,7 +17,7 @@ chrome.extension.onConnect.addListener((port) => {
 
             case 'init':
                 if (currentTabEQ) {
-                    port.postMessage({action: msg.action, enabled: currentTabEQ.enabled})
+                    port.postMessage({action: msg.action, enabled: currentTabEQ.enabled, filters: currentTabEQ.filters})
                 } else {
                     createEqualizer(msg.tabID)
                     .then(() => {

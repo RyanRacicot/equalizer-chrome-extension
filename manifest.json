@@ -1,11 +1,11 @@
 {
     "manifest_version": 2,
     "name": "Tab Equalizer",
-    "version": "1.0",
-    "description": "Google Chrome Tab Equalizer",
+    "short_name": "Tab EQ",
+    "version": "0.0.3",
+    "description": "8-band equalizer for all tab audio.",
     "permissions": [
         "tabs",
-        "activeTab",
         "tabCapture"
     ],
     "background": {

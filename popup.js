@@ -13,6 +13,7 @@ async function main() {
 	port = chrome.extension.connect({
 		name: "Chrome Equalizer"
 	})
+
 	try {
 		chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
 			tabID = tabs[0].id
@@ -21,6 +22,11 @@ async function main() {
 			port.onMessage.addListener((msg) => {
 				switch (msg.action) {
 					case 'init':
+						for (let sliderID in msg.filters) {
+							setSliderValue(sliderID, msg.filters[sliderID].gain)
+						}
+						togglePowerIndicator(msg.enabled);
+						break;
 					case 'power':
 						togglePowerIndicator(msg.enabled);
 						break;		

@@ -7,8 +7,6 @@
     <body> 
             <div id="main" class="gradient">
                 <div id="title">
-
-
                     <div id="buttons">
                         <div id="icons">
                             <span id="power">
@@ -18,9 +16,7 @@
                                 <svg version="1.1" id="reset-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 489.935 489.935" style="enable-background:new 0 0 489.935 489.935;" xml:space="preserve" width="100px" height="100px" fill="#ffffff" stroke="#ffffff" stroke-width="0"><g id="IconsRepo_bgCarrier"></g> <path d="M278.235,33.267c-116.7,0-211.6,95-211.6,211.7v0.7l-41.9-63.1c-4.1-6.2-12.5-7.9-18.7-3.8c-6.2,4.1-7.9,12.5-3.8,18.7 l60.8,91.5c2.2,3.3,5.7,5.4,9.6,5.9c0.6,0.1,1.1,0.1,1.7,0.1c3.3,0,6.5-1.2,9-3.5l84.5-76.1c5.5-5,6-13.5,1-19.1 c-5-5.5-13.5-6-19.1-1l-56.1,50.7v-1c0-101.9,82.8-184.7,184.6-184.7s184.7,82.8,184.7,184.7s-82.8,184.7-184.6,184.7 c-49.3,0-95.7-19.2-130.5-54.1c-5.3-5.3-13.8-5.3-19.1,0c-5.3,5.3-5.3,13.8,0,19.1c40,40,93.1,62,149.6,62 c116.6,0,211.6-94.9,211.6-211.7S394.935,33.267,278.235,33.267z"></path> </svg>
                             </span>
                         </div>
-                        <div class="divider" style="margin: 0 auto;">
-                            <!-- <h2>CHROME EQ</h2> -->
-                        </div>
+                        <div class="divider" style="margin: 0 auto;"></div>
                         <select name="presets" id="presets">
                             <option disabled selected value>PRESETS</option>
                             <option value="acoustic">Acoustic</option>
@@ -44,12 +40,30 @@
                         </select>
                     </div>
                 </div>
+                <!-- <div class="idBLabels" id="left">
+                    <span id="top-volume-label">+15dB</span>
+                    <div class="tick"></div>
+                    <div class="tick middle"></div>
+                    <div class="tick"></div>
+                    <span id="middle-volume-label">0dB</span>
+                    <div class="tick"></div>
+                    <div class="tick middle"></div>
+                    <div class="tick"></div>
+                    <span id="bottom-volume-label">-15dB</span>
+                </div>
+                <div class="idBLabels" id="right">
+                    <span id="top-volume-label">+15dB</span>
+                    <div class="tick"></div>
+                    <div class="tick middle"></div>
+                    <div class="tick"></div>
+                    <span id="middle-volume-label">0dB</span>
+                    <div class="tick"></div>
+                    <div class="tick middle"></div>
+                    <div class="tick"></div>
+                    <span id="bottom-volume-label">-15dB</span>
+                </div> -->
                 <div id="eq-sliders">
-                    <div id="idBLabels">
-                        <span id="top-volume-label">+15dB</span>
-                        <span id="middle-volume-label">0dB</span>
-                        <span id="bottom-volume-label">-15dB</span>
-                    </div>
+                    
                     <div class="slider-wrapper">
                         <input type="range" min="-15" max="15" value="0" id="s0" step="1" class="gain-slider" orient="vertical" list="volsettings">
                         <label for="s0">0dB</label>
@@ -83,25 +97,24 @@
                         <label for="s7">0dB</label>
                     </div>
                 </div>
-                
-                <datalist id="volsettings">
-                    <option>-15</option>
-                    <option>-10</option>
-                    <option>-5</option>
-                    <option>0</option>
-                    <option>5</option>
-                    <option>10</option>
-                    <option>15</option>
-                    <!-- <option>-40</option>
-                    <option>-30</option>
-                    <option>-20</option>
-                    <option>-10</option>
-                    <option>0</option>
-                    <option>10</option>
-                    <option>20</option>
-                    <option>30</option>
-                    <option>40</option> -->
-                </datalist>
+                <div id="knobs">
+                    <div class="knob" id="pre-amp">
+                        <div class="dial"></div>
+                        <span class="label">PreAmp</span>
+                    </div>
+                    <div class="knob" id="pan">
+                        <div class="dial"></div>
+                        <span class="label">Pan</span>
+                    </div>
+                    <div class="knob" id="delay">
+                        <div class="dial"></div>
+                        <span class="label">Delay</span>
+                    </div>
+                    <div class="knob" id="distortion">
+                        <div class="dial"></div>
+                        <span class="label">Distortion</span>
+                    </div>
+                </div>
             </div>
         <script src="jquery-3.1.4.min.js"></script>
         <script type="module" src="popup.js"></script>
