@@ -10,7 +10,9 @@ chrome.extension.onConnect.addListener((port) => {
 
         if (!currentTabEQ && msg.action != 'init') {
             console.error('No EQ initialized for tab: ', msg.tabID);
-            return;
+            createEqualizer(msg.tabID).then(() => {
+                port.postMessage({action: msg.action, enabled: Equalizers[msg.tabID].enabled})
+            })
         }
 
         switch (msg.action) {

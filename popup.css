@@ -93,7 +93,7 @@ body {
     flex-direction: row;
     padding: 2em 0em;
     justify-content: space-evenly;
-    margin: 7em 0em 8em 0em;
+    margin: 7em 0em 6em 0em;
 }
 
 .slider-wrapper {
@@ -131,7 +131,7 @@ input[type="range"].gain-slider::-webkit-slider-thumb
 }
 
 label {
-    /* display: none; */
+    display: none;
     position: absolute;
     bottom: 0;
     width: 15px;
