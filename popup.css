@@ -232,6 +232,10 @@ label {
     background: url('./assets/keyboard_arrow_down-24px.svg') no-repeat right transparent;
 }
 
+#presets option {
+    color: black;
+}
+
 #power-icon {
     height: 35px;
     width: 35px;
