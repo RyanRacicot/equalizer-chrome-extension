@@ -11,7 +11,7 @@ var tabID;
 
 async function main() {
 	port = chrome.extension.connect({
-		name: "Chrome Equalizer"
+		name: "Tab Equalizer"
 	})
 
 	try {
