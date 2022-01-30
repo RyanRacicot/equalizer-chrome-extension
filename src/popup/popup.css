@@ -1,0 +1,291 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: max-content;
+    width: max-content;
+    background-color: #000;
+    color: white;
+    font-family: 'Roboto',sans-serif;
+}
+
+#main {
+    height: auto;
+    width: auto;
+    padding: 1em;
+}
+
+.gradient {
+    background: linear-gradient(35deg,
+    #000000,
+    #004ecc,
+    #600178,
+    #780127,
+    #780174
+    );
+    background-position: center;
+    background-size: 400% 400%;
+    animation-name: MOVE-BG;
+    animation-duration: 15s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* KNOBS */
+
+#knobs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+#knobs .knob {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#knobs .knob .dial:after {
+    position: absolute;
+    top: 12.5%;
+    left: 50%;
+    transform: translateX(-50%);
+    content: '';
+    height: 7px;
+    width: 7px;
+    background: white;
+    /* border: 2px solid white; */
+    border-radius: 50%;
+}
+
+#knobs .knob .dial {
+    display: block;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    shape-outside: circle();
+    box-shadow: -1px 1px 5px white,
+    1px -1px 5px white;
+    background-color: transparent;
+    border: 2px solid white;
+    animation: SPIN-ME 3s ease-in-out infinite alternate;
+}
+
+@keyframes SPIN-ME {
+    from {
+        transform: rotate(-45deg);
+    }
+    to {
+        transform: rotate(45deg);
+    }
+}
+
+#knobs .knob .label {
+    padding-top: .75em;
+}
+
+/* EQ CONTENT */
+
+#eq-sliders {
+    display: flex;
+    flex-direction: row;
+    padding: 2em 0em;
+    justify-content: space-evenly;
+    margin: 7em 0em 6em 0em;
+}
+
+.slider-wrapper {
+    width: 45px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+input[type="range"].gain-slider
+{
+    cursor: pointer;
+    /* width: 150px !important; */
+    width: 200px !important;
+    -webkit-appearance: none;
+    border: 2px solid white;
+    background-color: transparent;
+    border-radius: 5px;
+    transform: rotate(270deg) translateY(-340%);
+    box-shadow: -1px 1px 5px white, 1px -1px 5px white;
+}
+
+.gain-slider:focus {
+    outline: none;
+}
+
+input[type="range"].gain-slider::-webkit-slider-thumb
+{
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 5px;
+}
+
+label {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    width: 15px;
+    transform: translateY(750%) translateX(75%);
+}
+
+.idBLabels#left {
+    position: absolute;
+    height: 200px;
+    width: 30px;
+    transform: translateY(11%) translateX(-10%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: right;
+    padding-right: .25em;
+}
+
+
+
+.idBLabels#left .tick {
+    display: block;
+    height: 1px;
+    width: 5px;
+    background: white;
+    margin-left: auto;
+}
+
+.idBLabels#right {
+    position: absolute;
+    height: 200px;
+    width: 30px;
+    right: 0;
+    transform: translateY(11%) translateX(-60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: left;
+    padding-right: .25em;
+}
+
+.idBLabels#right .tick {
+    display: block;
+    height: 1px;
+    width: 5px;
+    background: white;
+    margin-right: auto;
+}
+
+.idBLabels#left .tick.middle,
+.idBLabels#right .tick.middle {
+    width: 7px;
+}
+
+@keyframes MOVE-BG {
+    from {
+        background-position: 0% 50%;
+    }
+    to {
+        background-position: 100% 50%;
+    }
+}
+
+
+
+/* TITLE CONTENT */
+
+#buttons {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto auto auto;
+    grid-template-areas: 'buttons' 'title' 'presets';
+}
+
+#icons {
+    grid-area: 'buttons';
+}
+
+#title {
+    color: white;
+}
+#presets {
+    grid-area: 'presets';
+    display: block;
+    -webkit-appearance: none;
+    padding: .5em 2em .5em 1em;
+    margin: .5em;
+    color: white;
+    border: 2px solid white;
+    box-shadow: none;
+    font-size: 1em;
+    letter-spacing: .1em;
+    font-weight: bold;
+    background-color: transparent;
+    background-position-x: 90%;
+    outline: none;
+    box-shadow: -1px 1px 5px solid white, 1px -1px 5px solid white;
+    background: url('./assets/keyboard_arrow_down-24px.svg') no-repeat right transparent;
+}
+
+#presets option {
+    color: black;
+}
+
+#power-icon {
+    height: 35px;
+    width: 35px;
+    padding: .5em;
+    fill: white;
+    border-radius: 5px;
+    shape-outside: circle();
+}
+
+#power-icon.on {
+    fill: #00cc77;
+}
+
+#power-icon.off {
+    fill: white;
+}
+
+@keyframes PULSE {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(.95);
+    }
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+#power-icon:hover {
+    animation-name: PULSE;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+
+#reset-icon {
+    height: 35px;
+    width: 35px;
+    padding: .5em;
+    fill: white;
+    border-radius: 5px;
+}
+
+#reset-icon:hover {
+    animation-name: PULSE;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
