@@ -6,14 +6,15 @@
     "description": "8-band equalizer for all tab audio.",
     "permissions": [
         "tabs",
-        "tabCapture"
+        "tabCapture",
+        "storage"
     ],
     "background": {
-        "page": "background.html",
+        "page": "src/background.html",
         "persistent": true
     },
     "browser_action": {
         "default_icon": "assets/mixer.png",
-        "default_popup": "popup.html"
+        "default_popup": "src/popup/popup.html"
     }
 }
