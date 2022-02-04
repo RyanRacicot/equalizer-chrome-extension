@@ -19,7 +19,6 @@ async function main() {
       port.onMessage.addListener((msg) => {
         switch (msg.action) {
           case "init":
-			console.log('got init msg: ', msg)
             for (let sliderID in msg.filters) {
               setSliderValue(sliderID, msg.filters[sliderID].gain)
             }
@@ -39,11 +38,13 @@ async function main() {
           if (sliderId != "master")
             $("label[for='" + sliderId + "']")[0].innerHTML = sliderValue + "dB"
           sendFreqSpecificGainMessage(sliderId, sliderValue)
+          sliderValuesChanged()
         }
       })
 
       document.getElementById("save-default").onclick = async () => {
         port.postMessage({ action: "save-default", tabID: tabID })
+        savedDefaults()
       }
 
       document.getElementById("power").onclick = async () => {
@@ -51,7 +52,11 @@ async function main() {
       }
 
       document.getElementById("reset").onclick = async () => {
+
         for (var i = 0; i < sliderIDs.length; i++) {
+          if ($("#" + sliderIDs[i]).val() != 0) {
+            sliderValuesChanged()
+          }
           sendFreqSpecificGainMessage(sliderIDs[i], 0)
           $("#" + sliderIDs[i]).val(0)
           $("label[for='" + sliderIDs[i] + "']").text("0dB")
@@ -80,6 +85,20 @@ async function main() {
         } else {
           powerButton.css({ fill: "#00cc77" })
         }
+      }
+
+      function sliderValuesChanged() {
+        let defaultsButton = $("#save-default")
+        // If values already changed
+        if (defaultsButton.hasClass("sliders-unchanged")) {
+          // Hide save-default
+          $("#save-default").toggleClass("sliders-changed sliders-unchanged")
+        }
+      }
+
+      function savedDefaults() {
+        console.log('Saved defaults, updating button text')
+        document.getElementById("save-default").innerText = "Saved!"
       }
     })
   } catch (e) {

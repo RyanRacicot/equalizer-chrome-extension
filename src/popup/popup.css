@@ -203,7 +203,7 @@ label {
     display: grid;
     grid-template-rows: auto;
     grid-template-columns: auto auto auto;
-    grid-template-areas: 'buttons' 'title' 'presets';
+    grid-template-areas: 'buttons' 'title' 'save-default';
 }
 
 #icons {
@@ -213,27 +213,27 @@ label {
 #title {
     color: white;
 }
-#presets {
-    grid-area: 'presets';
+
+#save-default.sliders-changed {
+    grid-area: 'save-default';
     display: block;
+    width: 75%;
     -webkit-appearance: none;
-    padding: .5em 2em .5em 1em;
+    padding: .5em;
     margin: .5em;
+    margin-left: auto;
     color: white;
     border: 2px solid white;
+    border-radius: 5px;
     box-shadow: none;
     font-size: 1em;
     letter-spacing: .1em;
     font-weight: bold;
     background-color: transparent;
-    background-position-x: 90%;
-    outline: none;
-    box-shadow: -1px 1px 5px solid white, 1px -1px 5px solid white;
-    background: url('./assets/keyboard_arrow_down-24px.svg') no-repeat right transparent;
 }
 
-#presets option {
-    color: black;
+#save-default.sliders-unchanged {
+    display: none;
 }
 
 #power-icon {
@@ -283,6 +283,14 @@ label {
 }
 
 #reset-icon:hover {
+    animation-name: PULSE;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#save-default:hover {
     animation-name: PULSE;
     animation-duration: 2s;
     animation-timing-function: ease-in-out;
