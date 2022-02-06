@@ -1,20 +1,16 @@
 {
-    "manifest_version": 2,
-    "name": "Tab Equalizer",
-    "short_name": "Tab EQ",
-    "version": "0.0.3",
-    "description": "8-band equalizer for all tab audio.",
-    "permissions": [
-        "tabs",
-        "tabCapture",
-        "storage"
-    ],
-    "background": {
-        "page": "src/background.html",
-        "persistent": true
-    },
-    "browser_action": {
-        "default_icon": "assets/mixer.png",
-        "default_popup": "src/popup/popup.html"
-    }
+  "manifest_version": 2,
+  "name": "Tab Equalizer",
+  "short_name": "Tab EQ",
+  "version": "0.0.5",
+  "description": "8-band equalizer for all tab audio.",
+  "permissions": ["tabs", "tabCapture", "storage"],
+  "background": {
+    "page": "src/background.html",
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": "assets/mixer.png",
+    "default_popup": "src/popup/popup.html"
+  }
 }
