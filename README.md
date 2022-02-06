@@ -1,3 +1,5 @@
 # Chrome Extension: Equalizer
 
-This chrome extension allows for basic equalization specific for each tab of the users' browser.
+A chrome extension that allows for basic audio equalization for each tab of the browser.
+
+[Download and install in the Chrome Web Store!](https://chrome.google.com/webstore/detail/tab-equalizer/elffpeojjidpaecfanjkacjpkohlgjfk)
