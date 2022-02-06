@@ -1,3 +1,4 @@
 # Do not push secret to github
 *.pem
 *.crx
+.DS_Store
