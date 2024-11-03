@@ -1,0 +1,12 @@
+{
+    "name": "Tab Equalizer (TypeScript)",
+    "version": "3.0.0",
+    "description": "8-band equalizer for tab audio.",
+    "manifest_version": 3,
+    "options_page": "index.html",
+    "background": {
+        "service_worker": "service_worker.js"
+    },
+    "permissions": ["storage", "activeTab", "tabCapture", "scripting"],
+    "action": {}
+}

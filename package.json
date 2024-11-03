@@ -1,0 +1,42 @@
+{
+    "name": "chrome-tab-equalizer",
+    "version": "3.0.0",
+    "description": "8-band equalizer for all tab audio",
+    "private": true,
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "^5.0.1"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "@types/chrome": "^0.0.260",
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+        "typescript": "^4",
+        "esbuild": "^0.19.0",
+        "rimraf": "^5.0.1",
+        "npm-run-all": "^4.1.5",
+        "copyfiles": "^2.4.1"
+    },
+    "scripts": {
+        "clean": "rimraf build",
+        "copy-publishing-files": "copyfiles -f public/manifest.json build copyfiles public/assets build",
+        "build:react": "INLINE_RUNTIME_CHUNK=false react-scripts build",
+        "build:background": "esbuild src/service_worker/service_worker.ts --bundle --outfile=build/service_worker.js",
+        "build:options": "esbuild src/content_scripts/content_script.ts --bundle --outfile=build/content_script.js",
+        "build": "npm-run-all clean build:react build:background build:options copy-publishing-files"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}
