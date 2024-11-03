@@ -3,6 +3,7 @@ export interface Filter {
     type: BiquadFilterType
     frequency: number
     gain: number
+    Q?: number
     filter?: BiquadFilterNode
 }
 

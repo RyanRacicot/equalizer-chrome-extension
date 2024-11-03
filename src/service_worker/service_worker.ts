@@ -2,7 +2,14 @@ import {
     CURRENT_TAB_IDS_KEY,
     OPTION_TAB_ID_KEY,
     START_RECORDING_MESSAGE,
+    UPDATE_EQ_UI,
 } from "../types/constants"
+import { Filters } from "../types/Filter"
+import {
+    ContentScriptMessage,
+    StartRecordingMessageData,
+    UpdateEqualizerUIMessage,
+} from "../types/messages"
 import { getStorage, setStorage } from "./storage"
 import {
     addCurrentTabId,
@@ -11,6 +18,11 @@ import {
     openOptionsTab,
     sendMessageToTab,
 } from "./tabs"
+
+chrome.runtime.onInstalled.addListener(async () => {
+    console.log(`Clearing current Tab IDs on startup`)
+    await clearCurrentTabIds()
+})
 
 chrome.action.onClicked.addListener(async (currentTab) => {
     console.log(`Clicked on the action button in tab: ${currentTab}`)
@@ -34,11 +46,13 @@ chrome.action.onClicked.addListener(async (currentTab) => {
         // Also very important...
         await sleep(500)
 
+        const startRecordingMessage: StartRecordingMessageData = {
+            tab: currentTab,
+        }
+
         await sendMessageToTab(optionTab.id!, {
             type: START_RECORDING_MESSAGE,
-            data: {
-                tab: currentTab,
-            },
+            data: startRecordingMessage,
         })
     } else {
         console.log(`No audio found for tab. Skipping initializing equalizer.`)
@@ -66,6 +80,43 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
         await Promise.all([closeTab(optionTabId), clearCurrentTabIds()])
     }
 })
+
+const tabFilters = new Map<number, Filters>()
+
+// This is necessary even if we don't handle the data here
+chrome.runtime.onMessage.addListener(
+    (request: ContentScriptMessage, sender, sendResponse) => {
+        console.log(`Received runtime message in service worker:`, request)
+
+        if (request.tabId) {
+            tabFilters.set(request.tabId, request.filters)
+
+            console.log(`tabFilters: `, tabFilters)
+
+            const updateUIMessage: UpdateEqualizerUIMessage = {
+                tabId: request.tabId,
+                filters: request.filters,
+            }
+
+            console.log(`Sending update EQ UI request: `, updateUIMessage)
+
+            chrome.runtime.sendMessage({
+                type: UPDATE_EQ_UI,
+                data: updateUIMessage,
+            })
+        }
+
+        sendResponse({})
+    }
+)
+
+// Handle requests from React App for data
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//     if (message.type === GET_FILTER_DATA) {
+//         console.log(`Received request from React app`, message)
+//         sendResponse(Array.from(tabFilters.entries()))
+//     }
+// })
 
 async function sleep(ms: number = 0): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms))

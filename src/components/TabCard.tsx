@@ -1,5 +1,5 @@
 import React from "react"
-import { sendMessageToServiceWorker } from "../service_worker/tabs"
+import { sendMessageToRuntime } from "../service_worker/tabs"
 import { STOP_RECORDING_MESSAGE } from "../types/constants"
 import { TabCardProps } from "../types/TabCardProps"
 
@@ -8,12 +8,28 @@ export const TabCard: React.FC<TabCardProps> = ({
     url,
     title,
     isRecording,
+    filters,
 }) => {
     const sendStopRecordingMessage = () => {
-        sendMessageToServiceWorker({
+        sendMessageToRuntime({
             type: STOP_RECORDING_MESSAGE,
             data: { tabId: id },
         })
+    }
+
+    console.log(
+        `Creating tabCard with props: `,
+        id,
+        url,
+        title,
+        isRecording,
+        filters
+    )
+
+    const onSliderUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(`Updated slider with event: `, event)
+        // TODO - Actually propagate the requested value back to the EQ, then back to this element so the value isn't stuck at filter.gain
+        // Which should probably just happen after SHOULD_UPDATE_EQ_UI message or whatever it's called
     }
 
     return (
@@ -25,6 +41,26 @@ export const TabCard: React.FC<TabCardProps> = ({
                     </h3>
                     <p className="text-sm text-gray-500 truncate">{url}</p>
                 </div>
+                {filters && (
+                    <div className="filters">
+                        {Object.entries(filters).map(([id, filter]) => (
+                            <div>
+                                {filter.type} at frequency: {filter.frequency}{" "}
+                                with gain: {filter.gain}
+                                <input
+                                    type="range"
+                                    min="-20"
+                                    max="20"
+                                    value={filter.gain}
+                                    id={id}
+                                    step="1"
+                                    list="volsettings"
+                                    onInput={onSliderUpdate}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
                 <div className="flex items-center gap-2">
                     {isRecording && (
                         <div className="flex items-center">

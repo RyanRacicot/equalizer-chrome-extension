@@ -1,7 +1,7 @@
 import { Filters } from "../types/Filter"
 
 export default class Equalizer {
-    private filters: Filters
+    filters: Filters
     private audioContext: AudioContext
     private inputStream!: MediaStreamAudioSourceNode
     private outputStream: MediaStream
@@ -30,21 +30,61 @@ export default class Equalizer {
                 filter.gain,
                 this.audioContext.currentTime
             )
-
-            this.inputStream.connect(filter.filter)
+            if (filter.Q) {
+                filter.filter.Q.setValueAtTime(
+                    filter.Q,
+                    this.audioContext.currentTime
+                )
+            }
         }
 
         console.log(`Created filters: `, this.filters)
 
-        // Wire everything up
-        this.inputStream.connect(this.audioContext.destination)
+        // Wire everything up, order matters
+        this.inputStream
+            .connect(this.filters["s0"].filter!)
+            .connect(this.filters["s1"].filter!)
+            .connect(this.filters["s2"].filter!)
+            .connect(this.filters["s3"].filter!)
+            .connect(this.filters["s4"].filter!)
+            .connect(this.filters["s5"].filter!)
+            .connect(this.audioContext.destination)
     }
 
     private getDefaultFilterValues(): Filters {
         return {
             s0: {
                 type: "lowshelf",
-                frequency: 500,
+                frequency: 60,
+                gain: 16.0,
+            },
+            s1: {
+                type: "peaking",
+                frequency: 150,
+                gain: 5.0,
+                Q: 1.0,
+            },
+            s2: {
+                type: "peaking",
+                frequency: 400,
+                gain: -10.0,
+                Q: 1.0,
+            },
+            s3: {
+                type: "peaking",
+                frequency: 1_000,
+                gain: -10.0,
+                Q: 1.0,
+            },
+            s4: {
+                type: "peaking",
+                frequency: 2_400,
+                gain: -10.0,
+                Q: 1.0,
+            },
+            s5: {
+                type: "highshelf",
+                frequency: 11_000,
                 gain: -10.0,
             },
         }

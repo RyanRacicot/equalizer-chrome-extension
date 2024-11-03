@@ -13,9 +13,7 @@ export async function sendMessageToTab(
     })
 }
 
-export async function sendMessageToServiceWorker(
-    message: Message
-): Promise<void> {
+export async function sendMessageToRuntime(message: Message): Promise<void> {
     return chrome.runtime.sendMessage(message.data)
 }
 
