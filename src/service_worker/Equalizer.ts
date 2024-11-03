@@ -30,14 +30,14 @@ export default class Equalizer {
                 filter.gain,
                 this.audioContext.currentTime
             )
+
+            this.inputStream.connect(filter.filter)
         }
 
         console.log(`Created filters: `, this.filters)
 
         // Wire everything up
-        this.inputStream
-            .connect(this.filters["s0"].filter!)
-            .connect(this.audioContext.destination)
+        this.inputStream.connect(this.audioContext.destination)
     }
 
     private getDefaultFilterValues(): Filters {

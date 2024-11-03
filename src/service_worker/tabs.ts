@@ -13,6 +13,12 @@ export async function sendMessageToTab(
     })
 }
 
+export async function sendMessageToServiceWorker(
+    message: Message
+): Promise<void> {
+    return chrome.runtime.sendMessage(message.data)
+}
+
 export async function openOptionsTab(): Promise<chrome.tabs.Tab> {
     return new Promise((resolve) => {
         getStorage(OPTION_TAB_ID_KEY).then((optionTabId: number) => {

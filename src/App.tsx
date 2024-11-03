@@ -1,16 +1,24 @@
 import React, { useState } from "react"
+import { useActiveTabs } from "./hooks/useActiveTabs"
+import { TabCard } from "./components/TabCard"
 
 const App: React.FC = () => {
-  const [count, setCount] = useState<number>(0)
+    const activeTabs = useActiveTabs()
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>Hello Extension</h1>
-      <button onClick={() => setCount((prev) => prev + 1)}>
-        Count: {count}
-      </button>
-    </div>
-  )
+    return (
+        <div className="p-4">
+            <h1 className="text-xl font-bold mb-4">Active Recordings</h1>
+            {activeTabs.length === 0 ? (
+                <p className="text-gray-500">No active recordings</p>
+            ) : (
+                <div className="space-y-2">
+                    {activeTabs.map((tab) => (
+                        <TabCard key={tab.id} {...tab} />
+                    ))}
+                </div>
+            )}
+        </div>
+    )
 }
 
 export default App

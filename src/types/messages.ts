@@ -3,10 +3,10 @@ export interface Message {
     data: StartRecordingMessageData | StopRecordingMessageData
 }
 
-interface StartRecordingMessageData {
+export interface StartRecordingMessageData {
     tab: chrome.tabs.Tab
 }
 
-interface StopRecordingMessageData {
+export interface StopRecordingMessageData {
     tabId: number
 }
