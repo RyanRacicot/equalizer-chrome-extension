@@ -80,10 +80,8 @@ export const TabCard: React.FC<TabCardProps> = ({
             <div className="p-4 bg-white rounded-lg shadow mb-4 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start">
                     <div className={styles.header}>
-                        <div className={styles.headerText}>
-                            <h3 className={styles.title} onClick={focusTab}>
-                                {title}
-                            </h3>
+                        <div className={styles.headerText} onClick={focusTab}>
+                            <h3 className={styles.title}>{title}</h3>
                             <p
                                 className={
                                     styles.url +
