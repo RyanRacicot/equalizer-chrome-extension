@@ -82,18 +82,12 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
     }
 })
 
-const tabFilters = new Map<number, Filters>()
-
 // This is necessary even if we don't handle the data here
 chrome.runtime.onMessage.addListener(
     (request: ContentScriptMessage, sender, sendResponse) => {
         console.log(`Received runtime message in service worker:`, request)
 
         if (request.tabId) {
-            tabFilters.set(request.tabId, request.filters)
-
-            console.log(`tabFilters: `, tabFilters)
-
             const updateUIMessage: UpdateEqualizerMessage = {
                 tabId: request.tabId,
                 filters: request.filters,
@@ -113,13 +107,11 @@ chrome.runtime.onMessage.addListener(
 
 // Handle requests from React App for data
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === UPDATE_EQ_BACKEND) {
-        console.log(
-            `Received request from React app. Forwarding to content_script`,
-            message
-        )
-        chrome.runtime.sendMessage(message)
-    }
+    console.log(
+        `Received request from React app. Forwarding to content_script`,
+        message
+    )
+    chrome.runtime.sendMessage(message)
 
     sendResponse({})
 })

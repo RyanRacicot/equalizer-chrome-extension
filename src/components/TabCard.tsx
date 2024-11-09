@@ -28,10 +28,6 @@ export const TabCard: React.FC<TabCardProps> = ({
     )
 
     const onSliderUpdate = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(`Updated slider with event: `, event)
-        // TODO - Actually propagate the requested value back to the EQ, then back to this element so the value isn't stuck at filter.gain
-        // Which should probably just happen after SHOULD_UPDATE_EQ_UI message or whatever it's called
-
         let updatedFilters = filters!
 
         event.target.id
@@ -42,8 +38,6 @@ export const TabCard: React.FC<TabCardProps> = ({
             tabId: id,
             filters: updatedFilters,
         }
-
-        console.log(`Sending event to runtime: ${id}`, updateEqMessage)
 
         chrome.runtime.sendMessage({
             type: UPDATE_EQ_BACKEND,
