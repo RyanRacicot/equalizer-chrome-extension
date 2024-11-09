@@ -14,7 +14,7 @@ export async function sendMessageToTab(
 }
 
 export async function sendMessageToRuntime(message: Message): Promise<void> {
-    return chrome.runtime.sendMessage(message.data)
+    return chrome.runtime.sendMessage(message)
 }
 
 export async function openOptionsTab(): Promise<chrome.tabs.Tab> {
@@ -60,6 +60,17 @@ export async function addCurrentTabId(tabId: number) {
         await setStorage(CURRENT_TAB_IDS_KEY, currentTabIds)
     } else {
         await setStorage(CURRENT_TAB_IDS_KEY, [tabId])
+    }
+}
+
+export async function removeCurrentTabId(tabId: number) {
+    const currentTabIds: number[] = await getStorage(CURRENT_TAB_IDS_KEY)
+
+    if (currentTabIds) {
+        await setStorage(
+            CURRENT_TAB_IDS_KEY,
+            currentTabIds.filter((activeTabId) => activeTabId != tabId)
+        )
     }
 }
 

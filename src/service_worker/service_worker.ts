@@ -2,6 +2,8 @@ import {
     CURRENT_TAB_IDS_KEY,
     OPTION_TAB_ID_KEY,
     START_RECORDING_MESSAGE,
+    STOP_RECORDING_MESSAGE,
+    TAB_EQ_INITIALIZED_MESSAGE,
     UPDATE_EQ_BACKEND,
     UPDATE_EQ_UI,
 } from "../types/constants"
@@ -9,6 +11,7 @@ import { Filters } from "../types/Filter"
 import {
     ContentScriptMessage,
     StartRecordingMessageData,
+    StopRecordingMessageData,
     UpdateEqualizerMessage,
 } from "../types/messages"
 import { getStorage, setStorage } from "./storage"
@@ -17,6 +20,7 @@ import {
     clearCurrentTabIds,
     closeTab,
     openOptionsTab,
+    removeCurrentTabId,
     sendMessageToTab,
 } from "./tabs"
 
@@ -26,15 +30,9 @@ chrome.runtime.onInstalled.addListener(async () => {
 })
 
 chrome.action.onClicked.addListener(async (currentTab) => {
-    console.log(`Clicked on the action button in tab: ${currentTab}`)
-
     const isActive: boolean = await tabAlreadyActive(currentTab.id!)
 
-    if (isActive) {
-        // TODO - Disable and remove that tab
-    }
-
-    if (currentTab.audible) {
+    if (!isActive && currentTab.audible) {
         addCurrentTabId(currentTab.id!)
 
         // For some reason this is very important
@@ -58,6 +56,13 @@ chrome.action.onClicked.addListener(async (currentTab) => {
     } else {
         console.log(`No audio found for tab. Skipping initializing equalizer.`)
     }
+
+    let optionsTabId = await getStorage(OPTION_TAB_ID_KEY)
+
+    // Open the options tab for the extension
+    chrome.tabs.update(optionsTabId, {
+        active: true,
+    })
 })
 
 async function tabAlreadyActive(tabId: number): Promise<boolean> {
@@ -76,34 +81,16 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
     const currentTabIds: number[] = await getStorage(CURRENT_TAB_IDS_KEY)
     const optionTabId: number = await getStorage(OPTION_TAB_ID_KEY)
 
+    // If the optionsTab is closed, remove all tabs from current
+    if (tabId == optionTabId) {
+        await setStorage(CURRENT_TAB_IDS_KEY, [])
+    }
+
     // If the tab being closed is the last actively monitored tab, and the options tab is still open. Close the options tab.
     if (currentTabIds.length == 1 && currentTabIds[0] == tabId && optionTabId) {
         await Promise.all([closeTab(optionTabId), clearCurrentTabIds()])
     }
 })
-
-// This is necessary even if we don't handle the data here
-chrome.runtime.onMessage.addListener(
-    (request: ContentScriptMessage, sender, sendResponse) => {
-        console.log(`Received runtime message in service worker:`, request)
-
-        if (request.tabId) {
-            const updateUIMessage: UpdateEqualizerMessage = {
-                tabId: request.tabId,
-                filters: request.filters,
-            }
-
-            console.log(`Sending update EQ UI request: `, updateUIMessage)
-
-            chrome.runtime.sendMessage({
-                type: UPDATE_EQ_UI,
-                data: updateUIMessage,
-            })
-        }
-
-        sendResponse({})
-    }
-)
 
 // Handle requests from React App for data
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -111,6 +98,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         `Received request from React app. Forwarding to content_script`,
         message
     )
+
+    switch (message.type) {
+        case STOP_RECORDING_MESSAGE:
+            let stopRecordingMessageData: StopRecordingMessageData =
+                message.data as StopRecordingMessageData
+            removeCurrentTabId(stopRecordingMessageData.tabId)
+        default:
+            console.log(
+                `Received unhandled message type in backend. Forwarding along.`
+            )
+
+            break
+    }
+
+    // By default for every message forward along so React + content script can pass data
     chrome.runtime.sendMessage(message)
 
     sendResponse({})

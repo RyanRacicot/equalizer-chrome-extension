@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useActiveTabs } from "./hooks/useActiveTabs"
-import { TabCard } from "./components/TabCard"
+import { TabCard } from "./components/TabCard/TabCard"
 
 const App: React.FC = () => {
     const activeTabs = useActiveTabs()

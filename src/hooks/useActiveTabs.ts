@@ -3,10 +3,12 @@ import { TabCardProps } from "../types/TabCardProps"
 import {
     Message,
     StartRecordingMessageData,
+    StopRecordingMessageData,
     UpdateEqualizerMessage,
 } from "../types/messages"
 import {
     START_RECORDING_MESSAGE,
+    STOP_RECORDING_MESSAGE,
     TAB_EQ_INITIALIZED_MESSAGE,
     UPDATE_EQ_BACKEND,
     UPDATE_EQ_UI,
@@ -42,6 +44,7 @@ export const useActiveTabs = () => {
                     })
                     break
                 }
+                case TAB_EQ_INITIALIZED_MESSAGE:
                 case UPDATE_EQ_BACKEND:
                 case UPDATE_EQ_UI: {
                     console.log(`Need to update EQ UI message: `, message)
@@ -60,26 +63,27 @@ export const useActiveTabs = () => {
                     })
                     break
                 }
-                case TAB_EQ_INITIALIZED_MESSAGE: {
-                    console.log(`TabEq has been initialized: ${message.data}`)
-                    break
-                }
-                // case STOP_RECORDING_MESSAGE: {
-                //     console.log(`Received ${STOP_RECORDING_MESSAGE} message`)
-                //     const data = message.data as StopRecordingMessageData
-                //     setTabs(prev => {
-                //         const newTabs = new Map(prev)
-                //         const currentTab = newTabs.get(data.tabId)
-                //         if (currentTab) {
-                //             newTabs.set(data.tabId, {
-                //                 ...currentTab,
-                //                 isRecording: false
-                //             })
-                //         }
-                //         return newTabs
-                //     })
+                // case TAB_EQ_INITIALIZED_MESSAGE: {
+                //     console.log(
+                //         `TabEq has been initialized updating React: `,
+                //         message.data
+                //     )
                 //     break
                 // }
+                case STOP_RECORDING_MESSAGE: {
+                    console.log(
+                        `Received ${STOP_RECORDING_MESSAGE} message in React`
+                    )
+                    const data = message.data as StopRecordingMessageData
+                    setTabs((prev) => {
+                        const newTabs = new Map(prev)
+
+                        newTabs.delete(data.tabId)
+
+                        return newTabs
+                    })
+                    break
+                }
             }
         }
 

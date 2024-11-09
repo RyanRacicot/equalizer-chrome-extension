@@ -1,5 +1,6 @@
 import {
     START_RECORDING_MESSAGE,
+    STOP_RECORDING_MESSAGE,
     TAB_EQ_INITIALIZED_MESSAGE,
     UPDATE_EQ_BACKEND,
 } from "../types/constants"
@@ -7,6 +8,7 @@ import Equalizer from "../service_worker/Equalizer"
 import { sendMessageToRuntime } from "../service_worker/tabs"
 import {
     StartRecordingMessageData,
+    StopRecordingMessageData,
     UpdateEqualizerMessage,
 } from "../types/messages"
 import { Filters } from "../types/Filter"
@@ -25,9 +27,13 @@ async function captureAudio(): Promise<MediaStream> {
     })
 }
 
+async function stopRecordingAudio(tabId: number): Promise<void> {
+    await tabEqualizers.get(tabId)?.disable()
+}
+
 async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
     console.log(`Attempting to record tab: `, tab)
-    const stream = await captureAudio()
+    const stream: MediaStream = await captureAudio()
 
     const audioContext = new AudioContext()
 
@@ -53,13 +59,7 @@ async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
 }
 
 async function updateEqualizer(tabId: number, filters: Filters) {
-    console.log(`Current equalizers: `, tabEqualizers)
-
-    console.log(`UPDATE EQUALIZER: `, tabId, filters)
-
     let equalizer = tabEqualizers.get(tabId)
-
-    console.log(`equalizer for tab: `, equalizer)
 
     if (equalizer != undefined) {
         // Update the audio
@@ -74,8 +74,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const { type, data } = request
 
     console.log(`Received runtime message in content_script: `, request)
-
-    // document.querySelector("#tab-title").textContent = data.currentTab.title
 
     switch (type) {
         case START_RECORDING_MESSAGE:
@@ -94,6 +92,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 updateEqualizerMessage.tabId,
                 updateEqualizerMessage.filters
             )
+            break
+        case STOP_RECORDING_MESSAGE:
+            let stopRecordingMessageData = data as StopRecordingMessageData
+            stopRecordingAudio(stopRecordingMessageData.tabId)
             break
         default:
             break
