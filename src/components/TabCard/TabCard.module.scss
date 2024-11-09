@@ -1,5 +1,117 @@
-@import "../../styles/variables"
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
-.tab-card {
-    background: $primary-color;
+.tabcard {
+    @include tab-card;
+    width: min-content;
+
+    // input[type="range"] {
+    //     writing-mode: vertical-rl;
+    //     direction: rtl;
+    //     width: 16px;
+    //     vertical-align: bottom;
+    // }
+
+    .header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        margin-bottom: 2em;
+
+        .headerText {
+            max-width: 85%;
+            margin: 0;
+            cursor: pointer;
+
+            h3,
+            p {
+                margin: 0;
+            }
+        }
+
+        .url {
+            color: $text-muted;
+            font-style: italic;
+        }
+
+        .closeIcon {
+            cursor: pointer;
+            justify-self: right;
+            font-size: x-large;
+        }
+    }
+
+    .filters {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+
+        .filter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 65px;
+
+            // Styling the sliders
+            .inputSlider {
+                -webkit-appearance: none;
+                appearance: none;
+                height: 200px; // Vertical height
+                width: 4px; // This will be the slider's thickness
+                background: #ddd;
+                border-radius: 2px;
+                outline: none;
+                padding: 0;
+                margin: 0;
+
+                // Critical: These transform rules make the slider vertical
+                writing-mode: bt-lr; /* IE */
+                -webkit-writing-mode: bt-lr; /* Old Safari */
+                writing-mode: vertical-lr;
+                transform: rotate(180deg);
+
+                // Hover state
+                &:hover {
+                    &::-webkit-slider-thumb {
+                        background: darken($color: $primary-color, $amount: 10);
+                    }
+                }
+
+                // Webkit/Blink specific styles (Chrome, Safari, Edge, Opera)
+                &::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 20px;
+                    height: 20px;
+                    background: $primary-color;
+                    border-radius: 5px;
+                    border: none;
+                    cursor: pointer;
+                    transition: all 0.2s ease-in-out;
+                    margin-left: -6px; // Centers thumb on track (previously was margin-top)
+                }
+
+                &::-webkit-slider-runnable-track {
+                    width: 8px; // This is now the thickness
+                    height: 85%;
+                    background: #ddd;
+                    border-radius: 4px;
+                    border: none;
+                }
+            }
+        }
+
+        .frequencyLabel {
+            color: $text-muted;
+            font-style: italic;
+        }
+
+        .resetIcon {
+            cursor: pointer;
+            font-size: x-large;
+            border-radius: 5px;
+        }
+    }
 }
