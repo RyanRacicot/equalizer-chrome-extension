@@ -51,6 +51,16 @@ export default class Equalizer {
             .connect(this.audioContext.destination)
     }
 
+    async update(filters: Filters): Promise<void> {
+        for (var [filterId, filter] of Object.entries(filters)) {
+            this.filters[filterId].filter?.gain.setValueAtTime(
+                filter.gain,
+                this.audioContext.currentTime
+            )
+            this.filters[filterId].gain = filter.gain
+        }
+    }
+
     private getDefaultFilterValues(): Filters {
         return {
             s0: {

@@ -1,7 +1,8 @@
 import React from "react"
-import { sendMessageToRuntime } from "../service_worker/tabs"
-import { STOP_RECORDING_MESSAGE } from "../types/constants"
+import { sendMessageToRuntime, sendMessageToTab } from "../service_worker/tabs"
+import { STOP_RECORDING_MESSAGE, UPDATE_EQ_BACKEND } from "../types/constants"
 import { TabCardProps } from "../types/TabCardProps"
+import { UpdateEqualizerMessage } from "../types/messages"
 
 export const TabCard: React.FC<TabCardProps> = ({
     id,
@@ -30,6 +31,24 @@ export const TabCard: React.FC<TabCardProps> = ({
         console.log(`Updated slider with event: `, event)
         // TODO - Actually propagate the requested value back to the EQ, then back to this element so the value isn't stuck at filter.gain
         // Which should probably just happen after SHOULD_UPDATE_EQ_UI message or whatever it's called
+
+        let updatedFilters = filters!
+
+        event.target.id
+
+        updatedFilters[event.target.id].gain = event.target.valueAsNumber
+
+        let updateEqMessage: UpdateEqualizerMessage = {
+            tabId: id,
+            filters: updatedFilters,
+        }
+
+        console.log(`Sending event to runtime: ${id}`, updateEqMessage)
+
+        chrome.runtime.sendMessage({
+            type: UPDATE_EQ_BACKEND,
+            data: updateEqMessage,
+        })
     }
 
     return (

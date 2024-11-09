@@ -5,7 +5,7 @@ export interface Message {
     data:
         | StartRecordingMessageData
         | StopRecordingMessageData
-        | UpdateEqualizerUIMessage
+        | UpdateEqualizerMessage
 }
 
 export interface StartRecordingMessageData {
@@ -21,7 +21,7 @@ export interface ContentScriptMessage {
     filters: Filters
 }
 
-export interface UpdateEqualizerUIMessage {
+export interface UpdateEqualizerMessage {
     tabId: number
     filters: Filters
 }

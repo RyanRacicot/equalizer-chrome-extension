@@ -3,11 +3,12 @@ import { TabCardProps } from "../types/TabCardProps"
 import {
     Message,
     StartRecordingMessageData,
-    UpdateEqualizerUIMessage,
+    UpdateEqualizerMessage,
 } from "../types/messages"
 import {
     START_RECORDING_MESSAGE,
     TAB_EQ_INITIALIZED_MESSAGE,
+    UPDATE_EQ_BACKEND,
     UPDATE_EQ_UI,
 } from "../types/constants"
 
@@ -41,10 +42,11 @@ export const useActiveTabs = () => {
                     })
                     break
                 }
+                case UPDATE_EQ_BACKEND:
                 case UPDATE_EQ_UI: {
                     console.log(`Need to update EQ UI message: `, message)
                     setTabs((prev) => {
-                        const data = message.data as UpdateEqualizerUIMessage
+                        const data = message.data as UpdateEqualizerMessage
                         const newTabs = new Map(prev)
 
                         console.log(`Tab data: `, newTabs)

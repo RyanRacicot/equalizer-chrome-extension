@@ -1,10 +1,17 @@
 import {
     START_RECORDING_MESSAGE,
     TAB_EQ_INITIALIZED_MESSAGE,
+    UPDATE_EQ_BACKEND,
 } from "../types/constants"
 import Equalizer from "../service_worker/Equalizer"
 import { sendMessageToRuntime } from "../service_worker/tabs"
-import { StartRecordingMessageData } from "../types/messages"
+import {
+    StartRecordingMessageData,
+    UpdateEqualizerMessage,
+} from "../types/messages"
+import { Filters } from "../types/Filter"
+
+const tabEqualizers = new Map<number, Equalizer>()
 
 async function captureAudio(): Promise<MediaStream> {
     return new Promise((resolve) => {
@@ -28,8 +35,13 @@ async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
 
     await equalizer.init().then(() => {
         console.log(
-            `Equalizer initialized, attempting to send filter data back to application`
+            `Equalizer initialized for tab: ${tab.id}, attempting to send filter data back to application`
         )
+
+        tabEqualizers.set(tab.id!, equalizer)
+
+        console.log(`tabEqualizers: `, tabEqualizers)
+
         sendMessageToRuntime({
             type: TAB_EQ_INITIALIZED_MESSAGE,
             data: {
@@ -38,6 +50,24 @@ async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
             },
         })
     })
+}
+
+async function updateEqualizer(tabId: number, filters: Filters) {
+    console.log(`Current equalizers: `, tabEqualizers)
+
+    console.log(`UPDATE EQUALIZER: `, tabId, filters)
+
+    let equalizer = tabEqualizers.get(tabId)
+
+    console.log(`equalizer for tab: `, equalizer)
+
+    if (equalizer != undefined) {
+        // Update the audio
+        equalizer.update(filters)
+        // Update the UI
+    } else {
+        console.error(`No equalizer found for tabId: ${tabId}`)
+    }
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -49,9 +79,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     switch (type) {
         case START_RECORDING_MESSAGE:
-            const parsed = data as StartRecordingMessageData
-            startRecordingAudio(parsed.tab)
-            // injectHTML(data.currentTab)
+            let startRecordingMessageData = data as StartRecordingMessageData
+            startRecordingAudio(startRecordingMessageData.tab)
+            break
+        case UPDATE_EQ_BACKEND:
+            let updateEqualizerMessage = data as UpdateEqualizerMessage
+
+            console.log(
+                `Parsed updateEqualizerMessage: `,
+                type,
+                updateEqualizerMessage
+            )
+            updateEqualizer(
+                updateEqualizerMessage.tabId,
+                updateEqualizerMessage.filters
+            )
             break
         default:
             break
