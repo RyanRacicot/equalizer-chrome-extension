@@ -2,15 +2,14 @@
 @import "../../styles/mixins";
 
 .tabcard {
-    @include tab-card;
-    width: min-content;
-
-    // input[type="range"] {
-    //     writing-mode: vertical-rl;
-    //     direction: rtl;
-    //     width: 16px;
-    //     vertical-align: bottom;
-    // }
+    @include normal-font;
+    width: 415px;
+    height: 300px;
+    margin: 1em;
+    padding: 1em;
+    border-radius: $border-radius;
+    background-color: $background-color;
+    box-shadow: $box-shadow-hover;
 
     .header {
         display: flex;
@@ -24,21 +23,39 @@
             margin: 0;
             cursor: pointer;
 
-            h3,
-            p {
+            .title {
+                @include bold-font;
                 margin: 0;
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            p {
+                @include italic-font;
+                color: $text-muted;
+                margin: 0;
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
-        .url {
-            color: $text-muted;
-            font-style: italic;
-        }
-
-        .closeIcon {
-            cursor: pointer;
+        .icons {
             justify-self: right;
-            font-size: x-large;
+
+            .closeIcon {
+                cursor: pointer;
+                font-size: x-large;
+                padding: 2px 6px;
+            }
+
+            .resetIcon {
+                cursor: pointer;
+                font-size: large;
+            }
         }
     }
 
@@ -106,12 +123,6 @@
         .frequencyLabel {
             color: $text-muted;
             font-style: italic;
-        }
-
-        .resetIcon {
-            cursor: pointer;
-            font-size: x-large;
-            border-radius: 5px;
         }
     }
 }

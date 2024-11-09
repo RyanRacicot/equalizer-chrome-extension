@@ -81,7 +81,7 @@ export const TabCard: React.FC<TabCardProps> = ({
                 <div className="flex justify-between items-start">
                     <div className={styles.header}>
                         <div className={styles.headerText} onClick={focusTab}>
-                            <h3 className={styles.title}>{title}</h3>
+                            <h2 className={styles.title}>{title}</h2>
                             <p
                                 className={
                                     styles.url +
@@ -91,11 +91,18 @@ export const TabCard: React.FC<TabCardProps> = ({
                                 {url}
                             </p>
                         </div>
-                        <FontAwesomeIcon
-                            className={styles.closeIcon}
-                            icon={faTimes}
-                            onClick={sendStopRecordingMessage}
-                        />
+                        <div className={styles.icons}>
+                            <FontAwesomeIcon
+                                className={styles.resetIcon}
+                                icon={faSync}
+                                onClick={resetFilters}
+                            />
+                            <FontAwesomeIcon
+                                className={styles.closeIcon}
+                                icon={faTimes}
+                                onClick={sendStopRecordingMessage}
+                            />
+                        </div>
                     </div>
                     {filters && (
                         <div className={styles.filters}>
@@ -118,12 +125,6 @@ export const TabCard: React.FC<TabCardProps> = ({
                                     </p>
                                 </div>
                             ))}
-
-                            <FontAwesomeIcon
-                                className={styles.resetIcon}
-                                icon={faSync}
-                                onClick={resetFilters}
-                            />
                         </div>
                     )}
                 </div>

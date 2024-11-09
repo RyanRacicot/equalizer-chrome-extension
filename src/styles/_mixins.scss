@@ -1,6 +1,29 @@
-@mixin tab-card {
-    padding: $spacing-md;
-    border-radius: $border-radius;
-    background-color: $background-color;
-    box-shadow: $box-shadow-hover;
+@import url("https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+// Google Fonts
+$font-name: "Inter";
+$font-type: sans-serif;
+
+@mixin normal-font {
+    font-family: $font-name $font-type;
+    font-weight: 400;
+    font-style: normal;
+}
+
+@mixin bold-font {
+    font-family: $font-name $font-type;
+    font-weight: 700;
+    font-style: normal;
+}
+
+@mixin italic-font {
+    font-family: $font-name $font-type;
+    font-weight: 400;
+    font-style: italic;
+}
+
+@mixin bold-italic-font {
+    font-family: $font-name $font-type;
+    font-weight: 700;
+    font-style: italic;
 }
