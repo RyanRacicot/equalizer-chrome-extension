@@ -55,6 +55,7 @@
             .resetIcon {
                 cursor: pointer;
                 font-size: large;
+                padding: 3.5px; // Blame FontAwesome for not making these icons aligned on a common plane
             }
         }
     }

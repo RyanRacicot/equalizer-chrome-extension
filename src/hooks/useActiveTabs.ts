@@ -5,6 +5,7 @@ import {
     StartRecordingMessageData,
     StopRecordingMessageData,
     UpdateEqualizerMessage,
+    UpdateTabMetadataMessageData,
 } from "../types/messages"
 import {
     START_RECORDING_MESSAGE,
@@ -12,6 +13,7 @@ import {
     TAB_EQ_INITIALIZED_MESSAGE,
     UPDATE_EQ_BACKEND,
     UPDATE_EQ_UI,
+    UPDATE_TAB_METADATA,
 } from "../types/constants"
 
 export const useActiveTabs = () => {
@@ -63,13 +65,21 @@ export const useActiveTabs = () => {
                     })
                     break
                 }
-                // case TAB_EQ_INITIALIZED_MESSAGE: {
-                //     console.log(
-                //         `TabEq has been initialized updating React: `,
-                //         message.data
-                //     )
-                //     break
-                // }
+                case UPDATE_TAB_METADATA: {
+                    const data = message.data as UpdateTabMetadataMessageData
+                    console.log(`Received update tab metadata message`, data)
+
+                    setTabs((prev) => {
+                        const newTabs = new Map(prev)
+                        newTabs.set(data.tab.id!, {
+                            ...prev.get(data.tab.id!)!, // This is wrong or atleast unsafe
+                            title: data.tab.title!,
+                            url: data.tab.url!,
+                        })
+                        return newTabs
+                    })
+                    break
+                }
                 case STOP_RECORDING_MESSAGE: {
                     console.log(
                         `Received ${STOP_RECORDING_MESSAGE} message in React`

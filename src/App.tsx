@@ -7,8 +7,8 @@ const App: React.FC = () => {
     const activeTabs = useActiveTabs()
 
     return (
-        <div className="p-4">
-            <h1 className="text-xl font-bold mb-4">Tab Equalizer</h1>
+        <div className={styles.appRoot}>
+            <h1 className={styles.title}>Tab Equalizer</h1>
             {activeTabs.length === 0 ? (
                 <p className="text-gray-500">No active tabs!</p>
             ) : (

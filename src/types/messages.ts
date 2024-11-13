@@ -12,6 +12,10 @@ export interface StartRecordingMessageData {
     tab: chrome.tabs.Tab
 }
 
+export interface UpdateTabMetadataMessageData {
+    tab: chrome.tabs.Tab
+}
+
 export interface StopRecordingMessageData {
     tabId: number
 }

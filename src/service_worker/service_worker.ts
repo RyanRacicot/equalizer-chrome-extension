@@ -6,6 +6,7 @@ import {
     TAB_EQ_INITIALIZED_MESSAGE,
     UPDATE_EQ_BACKEND,
     UPDATE_EQ_UI,
+    UPDATE_TAB_METADATA,
 } from "../types/constants"
 import { Filters } from "../types/Filter"
 import {
@@ -25,7 +26,6 @@ import {
 } from "./tabs"
 
 chrome.runtime.onInstalled.addListener(async () => {
-    console.log(`Clearing current Tab IDs on startup`)
     await clearCurrentTabIds()
 })
 
@@ -53,16 +53,16 @@ chrome.action.onClicked.addListener(async (currentTab) => {
             type: START_RECORDING_MESSAGE,
             data: startRecordingMessage,
         })
+
+        let optionsTabId = await getStorage(OPTION_TAB_ID_KEY)
+
+        // Open the options tab for the extension
+        chrome.tabs.update(optionsTabId, {
+            active: true,
+        })
     } else {
         console.log(`No audio found for tab. Skipping initializing equalizer.`)
     }
-
-    let optionsTabId = await getStorage(OPTION_TAB_ID_KEY)
-
-    // Open the options tab for the extension
-    chrome.tabs.update(optionsTabId, {
-        active: true,
-    })
 })
 
 async function tabAlreadyActive(tabId: number): Promise<boolean> {
@@ -77,24 +77,56 @@ async function tabAlreadyActive(tabId: number): Promise<boolean> {
     })
 }
 
-chrome.tabs.onRemoved.addListener(async (tabId) => {
-    const currentTabIds: number[] = await getStorage(CURRENT_TAB_IDS_KEY)
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    let currentTabIds: number[] = await getStorage(CURRENT_TAB_IDS_KEY)
+    if (currentTabIds != undefined && currentTabIds.includes(tabId)) {
+        chrome.runtime.sendMessage({
+            type: UPDATE_TAB_METADATA,
+            data: {
+                tab: tab,
+            },
+        })
+    }
+})
+
+chrome.tabs.onRemoved.addListener(async (tabId: number) => {
+    let currentTabIds: number[] = await getStorage(CURRENT_TAB_IDS_KEY)
     const optionTabId: number = await getStorage(OPTION_TAB_ID_KEY)
 
     // If the optionsTab is closed, remove all tabs from current
     if (tabId == optionTabId) {
-        await setStorage(CURRENT_TAB_IDS_KEY, [])
-    }
+        await Promise.all([clearCurrentTabIds(), closeTab(optionTabId)])
+    } else if (currentTabIds.includes(tabId)) {
+        // Remove tabId from currentTabIds
+        let stillActiveTabs = currentTabIds.filter((id) => id != tabId)
 
-    // If the tab being closed is the last actively monitored tab, and the options tab is still open. Close the options tab.
-    if (currentTabIds.length == 1 && currentTabIds[0] == tabId && optionTabId) {
-        await Promise.all([closeTab(optionTabId), clearCurrentTabIds()])
+        await setStorage(CURRENT_TAB_IDS_KEY, stillActiveTabs)
+
+        // If the tab being closed is the last actively monitored tab, and the options tab is still open. Close the options tab.
+        if (
+            stillActiveTabs == undefined ||
+            // (stillActiveTabs.length == 1 &&
+            //     currentTabIds[0] == tabId &&
+            optionTabId
+        ) {
+            await Promise.all([closeTab(optionTabId), clearCurrentTabIds()])
+        } else {
+            // There are other open tabs, so update the UI
+            chrome.runtime.sendMessage({
+                type: STOP_RECORDING_MESSAGE,
+                data: {
+                    tabId: tabId,
+                },
+            })
+        }
+    } else {
+        // A tab not being recorded was closed so we don't care
     }
 })
 
 // Handle requests from React App for data
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(
+    console.debug(
         `Received request from React app. Forwarding to content_script`,
         message
     )

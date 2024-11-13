@@ -5,6 +5,15 @@
     @include normal-font;
 }
 
+.appRoot {
+    padding: 1.5em;
+}
+
+.title {
+    @include bold-font;
+    margin-top: 0;
+}
+
 .tabsContainer {
     display: flex;
     flex-direction: row;

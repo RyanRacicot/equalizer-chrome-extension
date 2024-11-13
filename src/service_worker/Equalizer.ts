@@ -2,6 +2,7 @@ import { Filters } from "../types/Filter"
 
 export default class Equalizer {
     filters: Filters
+    muted: boolean = false
     private audioContext: AudioContext
     private inputStream!: MediaStreamAudioSourceNode
     private outputStream: MediaStream
@@ -41,7 +42,7 @@ export default class Equalizer {
     }
 
     async enable() {
-        // Wire everything up, order matters
+        // Order matters
         this.inputStream
             .connect(this.filters["s0"].filter!)
             .connect(this.filters["s1"].filter!)
@@ -56,6 +57,20 @@ export default class Equalizer {
         this.outputStream.getTracks().forEach((outputTrack) => {
             outputTrack.stop()
         })
+    }
+
+    async mute(): Promise<void> {
+        if (!this.muted) {
+            this.inputStream.disconnect()
+            this.muted = true
+        }
+    }
+
+    async unmute(): Promise<void> {
+        if (this.muted) {
+            this.enable()
+            this.muted = false
+        }
     }
 
     async update(filters: Filters): Promise<void> {

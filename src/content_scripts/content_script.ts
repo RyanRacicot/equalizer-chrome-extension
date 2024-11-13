@@ -3,6 +3,7 @@ import {
     STOP_RECORDING_MESSAGE,
     TAB_EQ_INITIALIZED_MESSAGE,
     UPDATE_EQ_BACKEND,
+    UPDATE_TAB_METADATA,
 } from "../types/constants"
 import Equalizer from "../service_worker/Equalizer"
 import { sendMessageToRuntime } from "../service_worker/tabs"
@@ -10,6 +11,7 @@ import {
     StartRecordingMessageData,
     StopRecordingMessageData,
     UpdateEqualizerMessage,
+    UpdateTabMetadataMessageData,
 } from "../types/messages"
 import { Filters } from "../types/Filter"
 
@@ -58,6 +60,17 @@ async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
     })
 }
 
+async function handleTabUpdated(tab: chrome.tabs.Tab): Promise<void> {
+    if (tab.id && tabEqualizers.has(tab.id)) {
+        const eq = tabEqualizers.get(tab.id)!
+        if (!tab.audible || tab.mutedInfo?.muted) {
+            eq.mute()
+        } else {
+            eq.unmute()
+        }
+    }
+}
+
 async function updateEqualizer(tabId: number, filters: Filters) {
     let equalizer = tabEqualizers.get(tabId)
 
@@ -97,6 +110,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let stopRecordingMessageData = data as StopRecordingMessageData
             stopRecordingAudio(stopRecordingMessageData.tabId)
             break
+        case UPDATE_TAB_METADATA:
+            let updateTabMetaData = data as UpdateTabMetadataMessageData
+            handleTabUpdated(updateTabMetaData.tab)
         default:
             break
     }
