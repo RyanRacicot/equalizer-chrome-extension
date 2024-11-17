@@ -17,15 +17,6 @@ export const TabCard: React.FC<TabCardProps> = ({
     isRecording,
     filters,
 }) => {
-    console.log(
-        `Creating tabCard with props: `,
-        id,
-        url,
-        title,
-        isRecording,
-        filters
-    )
-
     const sendStopRecordingMessage = () => {
         chrome.runtime.sendMessage({
             type: STOP_RECORDING_MESSAGE,

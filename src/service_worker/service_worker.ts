@@ -3,17 +3,11 @@ import {
     OPTION_TAB_ID_KEY,
     START_RECORDING_MESSAGE,
     STOP_RECORDING_MESSAGE,
-    TAB_EQ_INITIALIZED_MESSAGE,
-    UPDATE_EQ_BACKEND,
-    UPDATE_EQ_UI,
     UPDATE_TAB_METADATA,
 } from "../types/constants"
-import { Filters } from "../types/Filter"
 import {
-    ContentScriptMessage,
     StartRecordingMessageData,
     StopRecordingMessageData,
-    UpdateEqualizerMessage,
 } from "../types/messages"
 import { getStorage, setStorage } from "./storage"
 import {
@@ -126,21 +120,12 @@ chrome.tabs.onRemoved.addListener(async (tabId: number) => {
 
 // Handle requests from React App for data
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.debug(
-        `Received request from React app. Forwarding to content_script`,
-        message
-    )
-
     switch (message.type) {
         case STOP_RECORDING_MESSAGE:
             let stopRecordingMessageData: StopRecordingMessageData =
                 message.data as StopRecordingMessageData
             removeCurrentTabId(stopRecordingMessageData.tabId)
         default:
-            console.log(
-                `Received unhandled message type in backend. Forwarding along.`
-            )
-
             break
     }
 

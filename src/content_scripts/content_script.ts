@@ -34,7 +34,7 @@ async function stopRecordingAudio(tabId: number): Promise<void> {
 }
 
 async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
-    console.log(`Attempting to record tab: `, tab)
+    console.log(`Attempting to capture audio for tab: `, tab)
     const stream: MediaStream = await captureAudio()
 
     const audioContext = new AudioContext()
@@ -42,13 +42,7 @@ async function startRecordingAudio(tab: chrome.tabs.Tab): Promise<void> {
     const equalizer = new Equalizer(audioContext, stream)
 
     await equalizer.init().then(() => {
-        console.log(
-            `Equalizer initialized for tab: ${tab.id}, attempting to send filter data back to application`
-        )
-
         tabEqualizers.set(tab.id!, equalizer)
-
-        console.log(`tabEqualizers: `, tabEqualizers)
 
         sendMessageToRuntime({
             type: TAB_EQ_INITIALIZED_MESSAGE,
@@ -79,14 +73,14 @@ async function updateEqualizer(tabId: number, filters: Filters) {
         equalizer.update(filters)
         // Update the UI
     } else {
-        console.error(`No equalizer found for tabId: ${tabId}`)
+        // console.error(`No equalizer found for tabId: ${tabId}`)
     }
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const { type, data } = request
 
-    console.log(`Received runtime message in content_script: `, request)
+    // console.log(`Received runtime message in content_script: `, request)
 
     switch (type) {
         case START_RECORDING_MESSAGE:
@@ -96,11 +90,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         case UPDATE_EQ_BACKEND:
             let updateEqualizerMessage = data as UpdateEqualizerMessage
 
-            console.log(
-                `Parsed updateEqualizerMessage: `,
-                type,
-                updateEqualizerMessage
-            )
             updateEqualizer(
                 updateEqualizerMessage.tabId,
                 updateEqualizerMessage.filters

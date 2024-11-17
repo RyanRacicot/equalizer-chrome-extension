@@ -7,20 +7,20 @@
     "background": {
         "service_worker": "service_worker.js"
     },
-    "permissions": ["storage", "activeTab", "tabCapture", "scripting"],
+    "permissions": ["storage", "activeTab", "tabCapture"],
     "action": {
         "default_title": "Tab Equalizer",
         "default_icon": {
-            "16": "assets/logo_16.png",
-            "32": "assets/logo_32.png",
-            "48": "assets/logo_48.png",
-            "128": "assets/logo_128.png"
+            "16": "assets/icon/icon_16.png",
+            "32": "assets/icon/icon_32.png",
+            "48": "assets/icon/icon_48.png",
+            "128": "assets/icon/icon_128.png"
         }
     },
     "icons": {
-        "16": "assets/logo_16.png",
-        "32": "assets/logo_32.png",
-        "48": "assets/logo_48.png",
-        "128": "assets/logo_128.png"
+        "16": "assets/icon/icon_16.png",
+        "32": "assets/icon/icon_32.png",
+        "48": "assets/icon/icon_48.png",
+        "128": "assets/icon/icon_128.png"
     }
 }
